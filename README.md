@@ -119,12 +119,11 @@ Full protocol: [`Docs/07_Leakage_Reproducibility_Protocol.md`](Docs/07_Leakage_R
 | 02 | [Deep Dataset Forensic Findings](Docs/02_Deep_Dataset_Forensic_Findings.md) | Verified facts about both datasets (row counts, duplicates, header issues) |
 | 03 | [Dataset Comparison & Label Mapping](Docs/03_Dataset_Comparison_and_Label_Mapping.md) | Side-by-side table, AndMal→MalDroid category mapping |
 | 04 | [Proposed Data Preprocessing Pipeline](Docs/04_Proposed_Data_Preprocessing_Pipeline.md) | Steps 1–12: static, dynamic, and fusion branches with per-branch diagrams |
-| 05 | [Proposed Model Architecture](Docs/05_Proposed_Model_Architecture.md) | Steps 13–14: end-to-end architecture, model-specific adapters |
+| **05** | **[Proposed Model Architecture](Docs/05_Proposed_Model_Architecture.md)** ⬅ _start here for the full picture_ | All 18 pipeline steps, all 5 models, complete end-to-end diagram — the single system overview |
 | 06 | [Experimental & Evaluation Plan](Docs/06_Experimental_and_Evaluation_Plan.md) | 4 feature experiments × 5 models, metrics |
 | 07 | [Leakage & Reproducibility Protocol](Docs/07_Leakage_Reproducibility_Protocol.md) | Anti-leakage rules, splitting strategy, seed policy |
 | 08 | [Limitations & Open Questions](Docs/08_Limitations_and_Open_Questions.md) | Confirmed limitations, open questions, known gaps |
 | 09 | [Professor Approval Summary](Docs/09_Professor_Approval_Summary.md) | One-page summary + questions for supervisor |
-| **10** | **[Complete System Architecture](Docs/10_System_Architecture.md)** ⬅ _start here for the full picture_ | All 18 pipeline steps, all 5 models, one end-to-end diagram — synthesises Docs 04 + 05 |
 
 ---
 

@@ -104,8 +104,4 @@ This document covers **pipeline steps 1–12** of the complete 18-step system. E
 | Feature selection benchmarking | Step 12 |
 | *(out of scope for this doc)* Model-specific views → training → evaluation → report | Steps 13–18 |
 
-→ **See [10 — Complete System Architecture](10_System_Architecture.md)** for the single end-to-end diagram that ties all 18 steps and all 5 models together in one place.
-
-→ **See [05 — Proposed Model Architecture](05_Proposed_Model_Architecture.md)** for the model-specific adapter details (steps 13–14).
-
 → **See [07 — Leakage & Reproducibility Protocol](07_Leakage_Reproducibility_Protocol.md)** for the full anti-leakage rules that govern step 8 and the AndMal isolation policy.
