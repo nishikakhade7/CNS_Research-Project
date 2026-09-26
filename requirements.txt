@@ -1,0 +1,14 @@
+pandas
+numpy
+pyarrow
+scikit-learn
+lightgbm
+imbalanced-learn
+shap
+torch
+loguru
+pyyaml
+psutil
+matplotlib
+joblib
+pytest

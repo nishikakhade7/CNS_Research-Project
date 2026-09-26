@@ -1,0 +1,83 @@
+# Default pipeline configuration.
+# Every stage reads its section from here. Override with --config path/to/other.yaml.
+
+seed: 42
+
+paths:
+  dataset_root: "Dataset"
+  maldroid_static_repaired: "Dataset/MalDroid2020/Static/feature_vectors_static_repaired.parquet"
+  maldroid_static_raw: "Dataset/MalDroid2020/Static/feature_vectors_static.csv"
+  maldroid_dynamic_139: "Dataset/MalDroid2020/Dynamic/feature_vectors_syscalls_frequency_5_Cat.csv"
+  maldroid_dynamic_470: "Dataset/MalDroid2020/Dynamic/feature_vectors_syscallsbinders_frequency_5_Cat.csv"
+  andmal_static_benign: "Dataset/AndMal2020/Static/Benign"
+  andmal_static_malicious: "Dataset/AndMal2020/Static/Malicious"
+  andmal_dynamic: "Dataset/AndMal2020/Dynamic/BeforeAndAfterReboot"
+  runs_dir: "runs"
+
+split:
+  train_frac: 0.80
+  val_frac: 0.10
+  test_frac: 0.10
+  stratify_by: "label"
+
+label_map:
+  # MalDroid native Class -> canonical name
+  maldroid:
+    1: "Adware"
+    2: "Banking"
+    3: "SMS Malware"
+    4: "Riskware"
+    5: "Benign"
+  # AndMal2020 static filename (without .csv) -> canonical MalDroid taxonomy name
+  # ONLY these 5 map cleanly (Doc 03). Everything else is intentionally absent here
+  # and is excluded from the common-label evaluation, never force-mapped.
+  andmal_to_maldroid:
+    Adware: "Adware"
+    Banker: "Banking"
+    SMS: "SMS Malware"
+    Riskware: "Riskware"
+    Ben0: "Benign"
+    Ben1: "Benign"
+    Ben2: "Benign"
+    Ben3: "Benign"
+    Ben4: "Benign"
+
+modalities:
+  - static
+  - dynamic_139
+  - dynamic_470
+  - fused
+
+feature_selection:
+  methods: ["mutual_info", "chi2", "lightgbm_importance"]
+  k_values: [50, 100, 270]
+  variance_threshold: 0.0
+
+imbalance:
+  strategy: "class_weight"   # one of: none, class_weight, undersample, smote
+
+models:
+  lightgbm:
+    n_estimators: 300
+    num_leaves: 31
+    learning_rate: 0.05
+    device_type: "cpu"     # flipped to "gpu"/"cuda" only if verified supported at runtime
+  balanced_rf:
+    n_estimators: 300
+  qda:
+    reg_param: 0.5
+    max_features: 60
+  nusvc:
+    nu: 0.4
+    kernel: "rbf"
+    max_features: 60
+  autoencoder:
+    latent_dim: 32
+    hidden_dims: [256, 64]
+    epochs: 40
+    batch_size: 64
+    lr: 0.001
+    device: "auto"   # auto -> cuda if available else cpu
+
+andmal_external:
+  common_classes: ["Benign", "Adware", "Banking", "SMS Malware", "Riskware"]
