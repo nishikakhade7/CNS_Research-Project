@@ -1,0 +1,64 @@
+# Smoke-test configuration. Points every path at tests/fixtures/smoke/ (tiny synthetic
+# data, ~100 MalDroid rows / a handful of AndMal rows per file) instead of the real
+# multi-GB datasets. Generate the fixtures first: python tests/build_smoke_fixtures.py
+
+seed: 42
+
+paths:
+  dataset_root: "tests/fixtures/smoke"
+  maldroid_static_repaired: "tests/fixtures/smoke/MalDroid/Static/static_repaired.parquet"
+  maldroid_static_raw: "tests/fixtures/smoke/MalDroid/Static/static_repaired.parquet"  # unused by any stage; filled in for schema completeness only
+  maldroid_dynamic_139: "tests/fixtures/smoke/MalDroid/Dynamic/dynamic_139.csv"
+  maldroid_dynamic_470: "tests/fixtures/smoke/MalDroid/Dynamic/dynamic_470.csv"
+  andmal_static_benign: "tests/fixtures/smoke/AndMal/Static/Benign"
+  andmal_static_malicious: "tests/fixtures/smoke/AndMal/Static/Malicious"
+  andmal_dynamic: "tests/fixtures/smoke/AndMal/Dynamic/BeforeAndAfterReboot"
+  runs_dir: "runs"
+
+split:
+  train_frac: 0.80
+  val_frac: 0.10
+  test_frac: 0.10
+  stratify_by: "label"
+
+label_map:
+  maldroid:
+    1: "Adware"
+    2: "Banking"
+    3: "SMS Malware"
+    4: "Riskware"
+    5: "Benign"
+  andmal_to_maldroid:
+    Adware: "Adware"
+    Banker: "Banking"
+    SMS: "SMS Malware"
+    Riskware: "Riskware"
+    Ben0: "Benign"
+    Ben1: "Benign"
+
+modalities:
+  - static
+  - dynamic_139
+  - dynamic_470
+  - fused
+
+feature_selection:
+  methods: ["mutual_info", "chi2", "lightgbm_importance"]
+  k_values: [3, 5, 8]
+  variance_threshold: 0.0
+
+imbalance:
+  strategy: "class_weight"
+
+models:
+  lightgbm:
+    n_estimators: 20
+    num_leaves: 7
+    learning_rate: 0.1
+    device_type: "cpu"
+  # qda/nusvc/balanced_rf/autoencoder sections intentionally omitted — out of Group 3
+  # scope for stages 11/12/13/14 (their adapter modules still exist under
+  # pipeline/adapters/ for other groups to build against, unused by this config).
+
+andmal_external:
+  common_classes: ["Benign", "Adware", "Banking", "SMS Malware", "Riskware"]

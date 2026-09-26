@@ -61,6 +61,7 @@ class Stage:
         log = get_stage_logger(self.name)
         force = self.name in ctx.force_stages
 
+        dep_hashes: dict[str, str] = {}
         for dep in self.depends_on:
             dep_record = get_stage_record(ctx.run_dir, dep)
             if dep_record is None or dep_record.get("status") != "SUCCESS":
@@ -72,8 +73,16 @@ class Stage:
                 )
                 log.error(msg)
                 raise StageDependencyError(msg)
+            dep_hashes[dep] = dep_record.get("config_hash", "")
 
-        this_cfg_hash = config_hash(self.config_section(ctx.cfg))
+        # A stage's effective hash includes every prerequisite's config_hash, not just its
+        # own config_section() — otherwise a stage whose own section doesn't happen to
+        # mention a changed upstream setting would keep skipping with a stale cached result
+        # even after its input artifact was silently overwritten by a rerun upstream stage.
+        # Found via smoke Test B: Stage 12/14 wrongly skipped after Stage 11/13 retrained
+        # with a changed lightgbm.n_estimators, because their own config_section() returns
+        # {} and doesn't reference the model config at all.
+        this_cfg_hash = config_hash({"own": self.config_section(ctx.cfg), "deps": dep_hashes})
         existing = get_stage_record(ctx.run_dir, self.name)
 
         if not force and existing and existing.get("status") == "SUCCESS" and existing.get("config_hash") == this_cfg_hash:

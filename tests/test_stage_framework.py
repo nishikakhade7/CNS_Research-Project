@@ -123,6 +123,33 @@ def test_dependent_stage_runs_after_dependency_succeeds(tmp_run_dir):
     assert record["status"] == "SUCCESS"
 
 
+def test_dependent_stage_reruns_when_only_upstream_config_changes(tmp_run_dir):
+    """Regression test: a downstream stage whose OWN config_section() is empty/unrelated
+    must still invalidate and rerun when an UPSTREAM dependency's config changed and was
+    re-run — otherwise it silently evaluates a stale artifact. Found via smoke Test B,
+    where Stage 12 (empty config_section) kept skipping after Stage 11 retrained with a
+    changed lightgbm.n_estimators."""
+    ctx1 = StageContext(cfg={"x": 1}, run_dir=tmp_run_dir)
+    _OKStage().execute(ctx1)
+    _DependentStage().execute(ctx1)
+
+    ctx2 = StageContext(cfg={"x": 2}, run_dir=tmp_run_dir)  # upstream config changes
+    _OKStage().execute(ctx2)  # reruns because its own config changed
+
+    calls = {"n": 0}
+
+    class _CountingDependent(_DependentStage):
+        def run(self, c):
+            calls["n"] += 1
+            return {"result": "ran"}
+
+    _CountingDependent().execute(ctx2)
+    assert calls["n"] == 1, (
+        "downstream stage did not rerun after its upstream dependency's config changed, "
+        "even though its own config_section() was unchanged/empty"
+    )
+
+
 def test_failed_stage_hard_stops_and_preserves_checkpoint(tmp_run_dir):
     ctx = StageContext(cfg={}, run_dir=tmp_run_dir)
     with pytest.raises(StageExecutionError):

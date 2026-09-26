@@ -115,49 +115,71 @@ def _audit_maldroid_static_repaired(path: Path) -> dict[str, Any]:
     }
 
 
-def _audit_andmal_static_dir(dir_path: Path) -> dict[str, Any]:
-    per_file: dict[str, Any] = {}
+def _audit_andmal_static_dirs(dir_paths: dict[str, Path]) -> dict[str, Any]:
+    """Audits all AndMal static CSVs across MULTIPLE directories (Benign AND Malicious)
+    with ONE shared hash registry, so a benign<->malicious duplicate can actually be
+    detected. An earlier version of this function was called once per directory, which
+    meant it could structurally never catch a cross-category (benign<->malicious) overlap
+    — only within-directory overlaps like Ben0<->Ben1. Fixed here; found during Stage 01
+    smoke-test review, not during the original real-data run."""
+    per_dir_files: dict[str, dict[str, Any]] = {}
     all_hashes: dict[str, list[str]] = {}
-    for csv_path in sorted(dir_path.glob("*.csv")):
-        label = csv_path.stem
-        n_rows = 0
-        n_cols = None
-        hashes_this_file: set[str] = set()
-        n_string_like = None
-        for chunk in pd.read_csv(csv_path, header=None, chunksize=CHUNK_ROWS, dtype=str, low_memory=False):
-            n_rows += len(chunk)
-            if n_cols is None:
-                n_cols = chunk.shape[1]
-            if n_string_like is None:
-                sample = chunk.iloc[:, 1:].head(200)
-                coerced = sample.apply(pd.to_numeric, errors="coerce")
-                n_string_like = int((coerced.isna() & sample.notna()).any(axis=0).sum())
-            hashes_this_file.update(chunk.iloc[:, 0].tolist())
-        for h in hashes_this_file:
-            all_hashes.setdefault(h, []).append(label)
-        per_file[label] = {
-            "rows": n_rows,
-            "columns": n_cols,
-            "feature_columns": (n_cols - 1) if n_cols else None,
-            "unique_hashes": len(hashes_this_file),
-            "internal_duplicate_hashes": n_rows - len(hashes_this_file),
-            "columns_with_non_numeric_values_sampled": n_string_like,
-        }
-        log.info(f"  audited AndMal file {csv_path.name}: {n_rows} rows")
+
+    for dir_label, dir_path in dir_paths.items():
+        per_dir_files[dir_label] = {}
+        for csv_path in sorted(dir_path.glob("*.csv")):
+            label = csv_path.stem
+            n_rows = 0
+            n_cols = None
+            hashes_this_file: set[str] = set()
+            n_string_like = None
+            for chunk in pd.read_csv(csv_path, header=None, chunksize=CHUNK_ROWS, dtype=str, low_memory=False):
+                n_rows += len(chunk)
+                if n_cols is None:
+                    n_cols = chunk.shape[1]
+                if n_string_like is None:
+                    sample = chunk.iloc[:, 1:].head(200)
+                    coerced = sample.apply(pd.to_numeric, errors="coerce")
+                    n_string_like = int((coerced.isna() & sample.notna()).any(axis=0).sum())
+                hashes_this_file.update(chunk.iloc[:, 0].tolist())
+            for h in hashes_this_file:
+                all_hashes.setdefault(h, []).append(label)
+            per_dir_files[dir_label][label] = {
+                "rows": n_rows,
+                "columns": n_cols,
+                "feature_columns": (n_cols - 1) if n_cols else None,
+                "unique_hashes": len(hashes_this_file),
+                "internal_duplicate_hashes": n_rows - len(hashes_this_file),
+                "columns_with_non_numeric_values_sampled": n_string_like,
+            }
+            log.info(f"  audited AndMal file {dir_label}/{csv_path.name}: {n_rows} rows")
 
     overlap_pairs: dict[str, int] = {}
+    benign_malicious_conflicts: list[str] = []
+    label_to_dir = {lbl: d for d, files in per_dir_files.items() for lbl in files}
     for h, labels in all_hashes.items():
-        if len(set(labels)) > 1:
-            key = " + ".join(sorted(set(labels)))
+        uniq = set(labels)
+        if len(uniq) > 1:
+            key = " + ".join(sorted(uniq))
             overlap_pairs[key] = overlap_pairs.get(key, 0) + 1
+            dirs_involved = {label_to_dir[l] for l in uniq}
+            if len(dirs_involved) > 1:
+                benign_malicious_conflicts.append(h)
 
+    total_rows = sum(v["rows"] for files in per_dir_files.values() for v in files.values())
     return {
-        "per_file": per_file,
-        "total_rows": sum(v["rows"] for v in per_file.values()),
+        "per_directory": per_dir_files,
+        "total_rows": total_rows,
         "total_unique_hashes": len(all_hashes),
         "cross_file_hash_overlaps": overlap_pairs,
+        "cross_category_label_conflicts": {
+            "count": len(benign_malicious_conflicts),
+            "example_hashes": benign_malicious_conflicts[:10],
+        },
         "note": "headerless files — column 0 is the sample hash; there is NO label column, "
-                "label is derived from the source filename only",
+                "label is derived from the source filename only. Overlap detection now spans "
+                "ALL directories passed in together (fixed bug: previously Benign and "
+                "Malicious were audited in separate calls and could never share a hash record).",
     }
 
 
@@ -209,11 +231,12 @@ class DataAuditStage(Stage):
                 "documented repair procedure (Doc 02) before Stage 01 can audit it."
             )
 
-        log.info("Auditing AndMal2020 static Benign files (streamed, chunked)...")
-        report["andmal"]["static_benign"] = _audit_andmal_static_dir(resolve(cfg["paths"]["andmal_static_benign"]))
-
-        log.info("Auditing AndMal2020 static Malicious files (streamed, chunked — this includes a 1.8GB file, may take a few minutes)...")
-        report["andmal"]["static_malicious"] = _audit_andmal_static_dir(resolve(cfg["paths"]["andmal_static_malicious"]))
+        log.info("Auditing AndMal2020 static Benign + Malicious files together "
+                 "(streamed, chunked, shared hash registry so cross-category conflicts can be detected)...")
+        report["andmal"]["static"] = _audit_andmal_static_dirs({
+            "Benign": resolve(cfg["paths"]["andmal_static_benign"]),
+            "Malicious": resolve(cfg["paths"]["andmal_static_malicious"]),
+        })
 
         log.info("Auditing AndMal2020 dynamic before/after-reboot files...")
         report["andmal"]["dynamic"] = _audit_andmal_dynamic_dir(resolve(cfg["paths"]["andmal_dynamic"]))

@@ -1,9 +1,10 @@
 """Stage 14 — Lock Final Pipeline Configuration.
 
-Selects the best (modality, model) combination BY macro-F1 among the results Stage 13
-actually produced across the full experiment matrix — never declared before that matrix
-was run. Re-fits that one winning combination deterministically (same seed) so a concrete,
-checksummed artifact exists to freeze, and records the exact configuration that produced it.
+GROUP 3 SCOPE: LightGBM only. Selects the best-performing modality BY macro-F1 among the
+results Stage 13 actually produced across the full modality experiment matrix — never
+declared before that matrix was run. Re-fits that one winning (modality, LightGBM)
+combination deterministically (same seed) so a concrete, checksummed artifact exists to
+freeze, and records the exact configuration that produced it.
 """
 
 from __future__ import annotations
@@ -14,8 +15,9 @@ import time
 from typing import Any
 
 import joblib
+import pandas as pd
 
-from pipeline.adapters import balanced_rf, lightgbm_adapter, nusvc, qda
+from pipeline.adapters import lightgbm_adapter
 from pipeline.core.environment import capture_environment
 from pipeline.core.runlog import get_stage_logger
 from pipeline.core.stage import Stage, StageContext
@@ -23,12 +25,7 @@ from pipeline.selection.stage08_selection import MODALITY_ARTIFACTS, _get_labels
 
 log = get_stage_logger("stage14_lock")
 
-BUILDERS = {
-    "lightgbm": None,  # handled specially (needs gpu_verified arg)
-    "balanced_rf": balanced_rf.build_model,
-    "qda": qda.build_model,
-    "nusvc": nusvc.build_model,
-}
+DEFAULT_TREE_K = 270
 
 
 class LockStage(Stage):
@@ -39,25 +36,20 @@ class LockStage(Stage):
         return {}
 
     def run(self, ctx: StageContext) -> dict[str, Any]:
-        import pandas as pd
-
         with open(ctx.run_dir / "metrics" / "stage13_ablation_results.json", encoding="utf-8") as f:
             ablation = json.load(f)
 
         best = None
         for modality, models in ablation.items():
-            for model_name, metrics in models.items():
-                if model_name == "autoencoder" or "macro_f1" not in metrics:
-                    continue
-                if best is None or metrics["macro_f1"] > best["macro_f1"]:
-                    best = {"modality": modality, "model": model_name, "macro_f1": metrics["macro_f1"],
-                            "feature_count": metrics["feature_count"]}
+            metrics = models["lightgbm"]
+            if best is None or metrics["macro_f1"] > best["macro_f1"]:
+                best = {"modality": modality, "macro_f1": metrics["macro_f1"], "feature_count": metrics["feature_count"]}
 
         if best is None:
-            raise RuntimeError("Stage 14 hard stop: no classifier metrics found in Stage 13 ablation results.")
+            raise RuntimeError("Stage 14 hard stop: no LightGBM metrics found in Stage 13 ablation results.")
 
-        log.info(f"Best configuration by macro-F1: model={best['model']} modality={best['modality']} "
-                 f"macro_f1={best['macro_f1']:.4f} ({best['feature_count']} features)")
+        log.info(f"Best modality by macro-F1: {best['modality']} macro_f1={best['macro_f1']:.4f} "
+                 f"({best['feature_count']} features)")
 
         cfg = ctx.cfg
         env = capture_environment()
@@ -76,33 +68,20 @@ class LockStage(Stage):
         train_mask = (df["split"] == "train").to_numpy()
         y_train = y_all[train_mask].to_numpy()
 
-        model_name = best["model"]
-        if model_name == "lightgbm":
-            cols = ranked[:best["feature_count"]]
-            model, device = lightgbm_adapter.build_model(cfg, gpu_verified)
-        elif model_name == "balanced_rf":
-            cols = ranked[:best["feature_count"]]
-            model = balanced_rf.build_model(cfg)
-        elif model_name == "qda":
-            cols = [f"{c}__scaled" for c in ranked[: cfg["models"]["qda"]["max_features"]]]
-            model = qda.build_model(cfg)
-        elif model_name == "nusvc":
-            cols = [f"{c}__scaled" for c in ranked[: cfg["models"]["nusvc"]["max_features"]]]
-            model = nusvc.build_model(cfg)
-        else:
-            raise RuntimeError(f"Unknown model '{model_name}' selected as best — hard stop.")
+        cols = ranked[:best["feature_count"]]
+        model, device = lightgbm_adapter.build_model(cfg, gpu_verified)
 
         t0 = time.time()
         model.fit(df.loc[train_mask, cols].to_numpy(), y_train)
         train_time = time.time() - t0
 
         frozen_path = ctx.run_dir / "artifacts" / "stage14_frozen_model.joblib"
-        joblib.dump({"model": model, "modality": modality, "model_name": model_name, "feature_columns": cols}, frozen_path)
+        joblib.dump({"model": model, "modality": modality, "model_name": "lightgbm", "feature_columns": cols}, frozen_path)
 
         checksum = hashlib.sha256(open(frozen_path, "rb").read()).hexdigest()[:16]
 
         lock_manifest = {
-            "selected_model": model_name,
+            "selected_model": "lightgbm",
             "selected_modality": modality,
             "feature_columns": cols,
             "n_features": len(cols),
@@ -116,6 +95,6 @@ class LockStage(Stage):
         with open(lock_path, "w", encoding="utf-8") as f:
             json.dump(lock_manifest, f, indent=2, default=str)
 
-        log.info(f"LOCKED: {model_name}/{modality}, {len(cols)} features, checksum={checksum} -> {frozen_path}")
+        log.info(f"LOCKED: lightgbm/{modality}, {len(cols)} features, checksum={checksum} -> {frozen_path}")
         return {"lock_manifest": str(lock_path), "frozen_model": str(frozen_path),
-                "selected_model": model_name, "selected_modality": modality}
+                "selected_model": "lightgbm", "selected_modality": modality}

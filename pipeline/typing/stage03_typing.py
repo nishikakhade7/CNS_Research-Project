@@ -43,11 +43,16 @@ def _classify_column(series: pd.Series) -> str:
         if n_unique > 0.5 * len(non_null):
             return "high_cardinality_string"
         return "categorical_string"
-    # numeric-ish
-    numeric_vals = coerced.dropna()
-    if numeric_vals.std() == 0:
+    # numeric-ish. IMPORTANT: blank ('') means "feature absent" (a real 0), not "unknown" —
+    # it must be FILLED with 0 here, not dropped, before checking variance/uniqueness.
+    # Dropping it (as an earlier version of this function did) removes every "absent" row
+    # from consideration, leaving only "present" (1.0) values behind — which makes every
+    # genuinely binary flag column look artificially zero-variance. Caught via smoke test:
+    # a synthetic binary column came back "zero_variance_numeric" for exactly this reason.
+    full_numeric = pd.to_numeric(series, errors="coerce").fillna(0.0)
+    if full_numeric.std() == 0:
         return "zero_variance_numeric"
-    uniq = set(numeric_vals.unique().tolist())
+    uniq = set(full_numeric.unique().tolist())
     if uniq.issubset({0, 1, 0.0, 1.0}):
         return "binary_numeric"
     return "count_or_continuous_numeric"

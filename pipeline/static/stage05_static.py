@@ -51,7 +51,18 @@ class StaticPreprocessingStage(Stage):
         table = pf.read(columns=[idx_col] + usable_cols)
         df = table.to_pandas()
         df = df.rename(columns={idx_col: "sample_id"})
-        df[usable_cols] = df[usable_cols].fillna(0)
+        # the repaired static parquet stores EVERY column as string (Doc 02 A.9 repair
+        # preserved raw values exactly), including this row-index column — it must be cast
+        # to int before merging against the manifest's integer sample_id, or pandas refuses
+        # the merge outright. Caught via smoke test (would have failed identically on the
+        # real 596MB file, not just the fixture).
+        df["sample_id"] = df["sample_id"].astype(int)
+        # usable_cols are still raw STRINGS at this point ('', '1.0', '17', ...) — the
+        # parquet stores everything as string. .fillna(0) alone is a no-op on '' (it is a
+        # real string value, not NaN); it must be numerically coerced first, THEN filled.
+        # Caught via smoke test: log1p/StandardScaler would have failed or silently
+        # misbehaved on string dtype columns on the real file too, not just the fixture.
+        df[usable_cols] = df[usable_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
 
         df = df.merge(split_manifest[["sample_id", "split"]], on="sample_id", how="inner")
         train_mask = df["split"] == "train"
