@@ -87,13 +87,13 @@ class FinalReportStage(Stage):
         _bar_plot(modalities, lgb_f1, "LightGBM Macro-F1 Across Modalities (TEST split)",
                   "Macro-F1", plots_dir / "modality_comparison_lightgbm.png")
 
-        # Plot 3: training time comparison (primary modality)
-        train_times = [internal.get(n, {}).get("train_time_sec") for n in clf_names]
-        # internal eval doesn't carry train_time (that's stage11); pull from stage11 instead
+        # Plot 3: training time comparison (pull from stage11 — stage12 eval doesn't record
+        # train_time itself; only models that appear in both reports are included)
         with open(ctx.run_dir / "metrics" / "stage11_training_results.json", encoding="utf-8") as f:
             training = json.load(f)
-        train_times = [training[n]["train_time_sec"] for n in clf_names]
-        _bar_plot(clf_names, train_times, "Training Time by Model (dynamic_470)",
+        timed_names = [n for n in clf_names if n in training]
+        train_times = [training[n]["train_time_sec"] for n in timed_names]
+        _bar_plot(timed_names, train_times, "Training Time by Model (dynamic_470)",
                   "Seconds", plots_dir / "training_time_by_model.png")
 
         # Confusion matrices for each classifier (primary modality)
@@ -129,7 +129,7 @@ class FinalReportStage(Stage):
             em = external["metrics"]
             md_lines.append(f"Macro-F1: {em['macro_f1']:.4f}, Accuracy: {em['accuracy']:.4f}, on {external['n_samples']} AndMal samples.")
         else:
-            md_lines.append(f"**Not possible for the locked configuration.** Reason: {external['reason']}")
+            md_lines.append(f"**Not possible for the locked configuration.** Reason: {external.get('reason', 'see external validation report for details.')}")
 
         md_lines += ["", "## Plots", ""]
         for p in sorted(plots_dir.glob("*.png")):

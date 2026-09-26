@@ -60,9 +60,9 @@ class ImbalanceStage(Stage):
 
             min_count = int(pd.Series(y_train).value_counts().min())
             undersample_ids = []
+            rng = np.random.RandomState(cfg["seed"])
             for c in classes:
                 ids_c = df.loc[train_mask & (y_all == c).to_numpy(), "sample_id"].to_numpy()
-                rng = np.random.RandomState(cfg["seed"])
                 chosen = rng.choice(ids_c, size=min_count, replace=False)
                 undersample_ids.extend(chosen.tolist())
 
