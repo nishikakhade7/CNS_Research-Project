@@ -85,13 +85,43 @@ class SplitStage(Stage):
                 else:
                     split_name = "test"
                 for sid in members:
-                    split_assignment[sid] = split_name
+                    split_assignment.loc[sid] = split_name
                 assigned += len(members)
 
             log.info(f"  class '{label}': {n_total} samples -> "
-                     f"train={sum(split_assignment[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='train')}, "
-                     f"val={sum(split_assignment[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='val')}, "
-                     f"test={sum(split_assignment[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='test')}")
+                     f"train={sum(split_assignment.loc[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='train')}, "
+                     f"val={sum(split_assignment.loc[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='val')}, "
+                     f"test={sum(split_assignment.loc[manifest.loc[manifest['label_canonical']==label,'sample_id']]=='test')}")
+
+        # ── Cross-class duplicate reconciliation ──────────────────────────────────
+        # A dup_group may contain rows from different classes (same 470-feature
+        # vector, different label).  The per-class loop above assigned them
+        # independently, so they may land in different splits.  Force every
+        # member of such a group to the majority split (tie → "train").
+        manifest["_split_tmp"] = manifest["sample_id"].map(split_assignment)
+        cross_class_groups = (
+            manifest.groupby("dup_group")["label_canonical"].nunique()
+        )
+        cross_class_gids = cross_class_groups[cross_class_groups > 1].index.tolist()
+        if cross_class_gids:
+            log.warning(
+                f"{len(cross_class_gids)} dup_group(s) span multiple classes "
+                f"(same 470-feature vector, different label) — reconciling to majority split."
+            )
+            for gid in cross_class_gids:
+                group_rows = manifest[manifest["dup_group"] == gid]
+                current_splits = group_rows["_split_tmp"].value_counts()
+                majority_split = current_splits.idxmax()  # ties broken by first-max
+                member_sids = group_rows["sample_id"].tolist()
+                classes_in_group = group_rows["label_canonical"].unique().tolist()
+                log.warning(
+                    f"  dup_group={gid}: classes={classes_in_group}, "
+                    f"split votes={current_splits.to_dict()} → reassigning all to '{majority_split}'"
+                )
+                for sid in member_sids:
+                    split_assignment.loc[sid] = majority_split
+            manifest["_split_tmp"] = manifest["sample_id"].map(split_assignment)
+        manifest.drop(columns=["_split_tmp"], inplace=True)
 
         manifest["split"] = manifest["sample_id"].map(split_assignment)
         assert manifest["split"].isna().sum() == 0, "every sample must receive a split assignment"
