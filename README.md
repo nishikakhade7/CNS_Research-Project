@@ -131,7 +131,7 @@ Full protocol: [`Docs/07_Leakage_Reproducibility_Protocol.md`](Docs/07_Leakage_R
 
 Raw dataset files are **not tracked by git** (they are too large and must be obtained from the dataset authors).
 
-Full setup instructions, required paths, and class mappings: **[docs/DATASET_SETUP.md](docs/DATASET_SETUP.md)**
+Full setup instructions, required paths, and class mappings: **[Docs/DATASET_SETUP.md](Docs/DATASET_SETUP.md)**
 
 **Quick summary:**
 
@@ -163,9 +163,9 @@ git lfs pull
 pip install -r requirements.txt
 ```
 
-After cloning, all Group 3 shared artifacts are available under `runs/real/` — **other model groups do not need to run the pipeline**. See [docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md).
+After cloning, all Group 3 shared artifacts are available under `runs/real/` — **other model groups do not need to run the pipeline**. See [Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md).
 
-For a full explanation of what is stored in Git, Git LFS, and external storage, see **[docs/GITHUB_DATA_AND_ARTIFACTS.md](docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
+For a full explanation of what is stored in Git, Git LFS, and external storage, see **[Docs/GITHUB_DATA_AND_ARTIFACTS.md](Docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
 
 ---
 
@@ -225,22 +225,22 @@ Other model groups (QDA, NuSVC, Balanced RF, Autoencoder) consume Group 3's shar
 
 | Document | Description |
 |---|---|
-| [01 — Final Data Pipeline](docs/final/01_FINAL_DATA_PIPELINE.md) | End-to-end pipeline: all 15 stages, integrity, splitting, preprocessing, fusion, selection |
-| [06 — Methodology](docs/final/06_METHODOLOGY.md) | Academic-style methodology covering all design decisions |
-| [07 — Presentation Architecture](docs/final/07_PRESENTATION_ARCHITECTURE.md) | Slide-ready content with Mermaid diagrams for all pipeline components |
+| [01 — Final Data Pipeline](Docs/final/01_FINAL_DATA_PIPELINE.md) | End-to-end pipeline: all 15 stages, integrity, splitting, preprocessing, fusion, selection |
+| [06 — Methodology](Docs/final/06_METHODOLOGY.md) | Academic-style methodology covering all design decisions |
+| [07 — Presentation Architecture](Docs/final/07_PRESENTATION_ARCHITECTURE.md) | Slide-ready content with Mermaid diagrams for all pipeline components |
 
 ### Group 3 Results
 
 | Document | Description |
 |---|---|
-| [02 — LightGBM Results](docs/final/02_GROUP3_LIGHTGBM_RESULTS.md) | Full LightGBM config, per-class metrics, confusion matrix, modality comparison |
-| [05 — Final Results Summary](docs/final/05_FINAL_RESULTS_SUMMARY.md) | 5-minute executive summary of all results with embedded figures |
-| [04 — Dataset Limitations](docs/final/04_DATASET_LIMITATIONS.md) | Data quality disclosures, cross-class duplicates, scale limitations |
-| [03 — External Validation / AndMal](docs/final/03_EXTERNAL_VALIDATION_ANDMAL.md) | AndMal2020 validation attempt, feature-space incompatibility, exact finding |
+| [02 — LightGBM Results](Docs/final/02_GROUP3_LIGHTGBM_RESULTS.md) | Full LightGBM config, per-class metrics, confusion matrix, modality comparison |
+| [05 — Final Results Summary](Docs/final/05_FINAL_RESULTS_SUMMARY.md) | 5-minute executive summary of all results with embedded figures |
+| [04 — Dataset Limitations](Docs/final/04_DATASET_LIMITATIONS.md) | Data quality disclosures, cross-class duplicates, scale limitations |
+| [03 — External Validation / AndMal](Docs/final/03_EXTERNAL_VALIDATION_ANDMAL.md) | AndMal2020 validation attempt, feature-space incompatibility, exact finding |
 
 ### Generated Figures
 
-13 publication-quality figures from the real run are in [`docs/final/assets/figures/`](docs/final/assets/figures/):
+13 publication-quality figures from the real run are in [`Docs/final/assets/figures/`](Docs/final/assets/figures/):
 
 | Figure | Description |
 |---|---|
@@ -264,7 +264,7 @@ Other model groups (QDA, NuSVC, Balanced RF, Autoencoder) consume Group 3's shar
 
 Groups 1, 2, 4, and 5 should use the **shared Group 3 preprocessing outputs** rather than independently rebuilding the data pipeline. Using the shared artifacts guarantees all models are evaluated on the same canonical split with the same preprocessing.
 
-**Integration guide:** [docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md)
+**Integration guide:** [Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md)
 
 ---
 

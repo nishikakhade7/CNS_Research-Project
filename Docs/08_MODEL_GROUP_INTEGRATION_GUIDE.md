@@ -27,7 +27,7 @@ git lfs pull      # fetch the large LFS-managed artifacts
 |---|---|---|
 | Small artifacts (manifests, JSONs, scalers, small Parquets) | Normal Git | `git clone` |
 | Large feature Parquets (79–87 MB) | **Git LFS** | `git lfs pull` |
-| Raw datasets (MalDroid2020, AndMal2020) | **External only** | Obtain from dataset authors — see [`docs/DATASET_SETUP.md`](DATASET_SETUP.md) |
+| Raw datasets (MalDroid2020, AndMal2020) | **External only** | Obtain from dataset authors — see [`Docs/DATASET_SETUP.md`](../Docs/DATASET_SETUP.md) |
 
 ### Files in Git LFS (require `git lfs pull`)
 
@@ -41,7 +41,7 @@ git lfs pull      # fetch the large LFS-managed artifacts
 
 > **Note:** LFS pointer files look like small text files (~130 bytes) until you run `git lfs pull`. If you load a Parquet and get a `ParquetInvalidFileError`, you are reading a pointer — run `git lfs pull` first.
 
-For a complete data and artifact reference, see **[docs/GITHUB_DATA_AND_ARTIFACTS.md](GITHUB_DATA_AND_ARTIFACTS.md)**.
+For a complete data and artifact reference, see **[Docs/GITHUB_DATA_AND_ARTIFACTS.md](../Docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
 
 ---
 
@@ -349,7 +349,7 @@ Group 3 owns the LightGBM implementation. **Implementation is complete and locke
 | Test Balanced Accuracy | 0.9809595702907510 |
 
 Full per-class metrics, confusion matrix, modality comparison, and configuration details:  
-→ [`docs/final/02_GROUP3_LIGHTGBM_RESULTS.md`](docs/final/02_GROUP3_LIGHTGBM_RESULTS.md)
+→ [`Docs/final/02_GROUP3_LIGHTGBM_RESULTS.md`](../Docs/final/02_GROUP3_LIGHTGBM_RESULTS.md)
 
 ---
 
