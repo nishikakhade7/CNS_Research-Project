@@ -1,0 +1,371 @@
+{
+  "maldroid": {
+    "dynamic_139": {
+      "rows": 11598,
+      "feature_columns": 139,
+      "label_counts": {
+        "1.0": 1253,
+        "2.0": 2100,
+        "3.0": 3904,
+        "4.0": 2546,
+        "5.0": 1795
+      },
+      "missing_values_total": 0,
+      "zero_variance_feature_columns": 0,
+      "exact_duplicate_rows": 77,
+      "file_fingerprint_sha256_prefix": "b61652e68896ebc4",
+      "file_size_bytes": 14626377
+    },
+    "dynamic_470": {
+      "rows": 11598,
+      "feature_columns": 470,
+      "label_counts": {
+        "1": 1253,
+        "2": 2100,
+        "3": 3904,
+        "4": 2546,
+        "5": 1795
+      },
+      "missing_values_total": 0,
+      "zero_variance_feature_columns": 0,
+      "exact_duplicate_rows": 72,
+      "file_fingerprint_sha256_prefix": "a8f3279c0a2662c1",
+      "file_size_bytes": 11701483
+    },
+    "static_repaired": {
+      "rows": 11598,
+      "feature_columns": 50621,
+      "label_counts": {
+        "1": 1253,
+        "2": 2100,
+        "3": 3904,
+        "4": 2546,
+        "5": 1795
+      },
+      "columns_numeric_like_sampled": 50615,
+      "columns_text_like_sampled": 6,
+      "provenance": "repaired from feature_vectors_static.csv (UTF-7 decode + header realignment + Class attached via ROW-ORDER alignment with the dynamic file \u2014 NOT a hash-based join; MalDroid static files carry no sample hash)",
+      "file_fingerprint_sha256_prefix": "fb5ce9ecda3ac71d",
+      "file_size_bytes": 158843813
+    }
+  },
+  "andmal": {
+    "static": {
+      "per_directory": {
+        "Benign": {
+          "Ben0": {
+            "rows": 32084,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 32084,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ben1": {
+            "rows": 47861,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 47861,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ben2": {
+            "rows": 42635,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 42635,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ben3": {
+            "rows": 7847,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 7847,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ben4": {
+            "rows": 31754,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 31754,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          }
+        },
+        "Malicious": {
+          "Adware": {
+            "rows": 47210,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 47210,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Backdoor": {
+            "rows": 1538,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 1538,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Banker": {
+            "rows": 887,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 887,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Dropper": {
+            "rows": 2302,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 2302,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "FileInfector": {
+            "rows": 669,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 669,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "NoCategory": {
+            "rows": 2296,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 2296,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "PUA": {
+            "rows": 2051,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 2051,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ransomware": {
+            "rows": 6202,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 6202,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Riskware": {
+            "rows": 97349,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 97349,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Scareware": {
+            "rows": 1556,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 1556,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "SMS": {
+            "rows": 3125,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 3125,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Spy": {
+            "rows": 3540,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 3540,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Trojan": {
+            "rows": 13559,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 13559,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Zeroday": {
+            "rows": 13340,
+            "columns": 9504,
+            "feature_columns": 9503,
+            "unique_hashes": 13340,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          }
+        }
+      },
+      "total_rows": 357805,
+      "total_unique_hashes": 356302,
+      "cross_file_hash_overlaps": {
+        "Ben0 + Ben1": 1502,
+        "Ben0 + Ben4": 1
+      },
+      "cross_category_label_conflicts": {
+        "count": 0,
+        "example_hashes": []
+      },
+      "note": "headerless files \u2014 column 0 is the sample hash; there is NO label column, label is derived from the source filename only. Overlap detection now spans ALL directories passed in together (fixed bug: previously Benign and Malicious were audited in separate calls and could never share a hash record)."
+    },
+    "dynamic": {
+      "per_file": {
+        "Adware_after_reboot_Cat": {
+          "rows": 5142,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Adware_before_reboot_Cat": {
+          "rows": 5838,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Backdoor_after_reboot_Cat": {
+          "rows": 546,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Backdoor_before_reboot_Cat": {
+          "rows": 591,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "FileInfector_after_reboot_Cat": {
+          "rows": 119,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "FileInfector_before_reboot_Cat": {
+          "rows": 129,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "No_Category_after_reboot_Cat": {
+          "rows": 884,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "No_Category_before_reboot_Cat": {
+          "rows": 1048,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "PUA_after_reboot_Cat": {
+          "rows": 625,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "PUA_before_reboot_Cat": {
+          "rows": 665,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Ransomware_after_reboot_Cat": {
+          "rows": 1550,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Ransomware_before_reboot_Cat": {
+          "rows": 1861,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Riskware_after_reboot_Cat": {
+          "rows": 6792,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Riskware_before_reboot_Cat": {
+          "rows": 7261,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Scareware_after_reboot_Cat": {
+          "rows": 424,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Scareware_before_reboot_Cat": {
+          "rows": 462,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_after_reboot_Cat": {
+          "rows": 4025,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Banker_after_reboot_Cat": {
+          "rows": 123,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Banker_before_reboot_Cat": {
+          "rows": 118,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_before_reboot_Cat": {
+          "rows": 4412,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Dropper_after_reboot_Cat": {
+          "rows": 733,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Dropper_before_reboot_Cat": {
+          "rows": 837,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_SMS_after_reboot_Cat": {
+          "rows": 911,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_SMS_before_reboot_Cat": {
+          "rows": 1028,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Spy_after_reboot_Cat": {
+          "rows": 1039,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Trojan_Spy_before_reboot_Cat": {
+          "rows": 1801,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Zero_Day_after_reboot_Cat": {
+          "rows": 2146,
+          "columns": 144,
+          "has_hash_category_family": true
+        },
+        "Zero_Day_before_reboot_Cat": {
+          "rows": 2329,
+          "columns": 144,
+          "has_hash_category_family": true
+        }
+      },
+      "total_rows": 53439,
+      "note": "malicious categories only \u2014 no benign dynamic file exists in this release; before/after files are NOT row-aligned, only Hash-joinable"
+    }
+  }
+}

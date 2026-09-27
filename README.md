@@ -123,26 +123,49 @@ Full protocol: [`Docs/07_Leakage_Reproducibility_Protocol.md`](Docs/07_Leakage_R
 | 06 | [Experimental & Evaluation Plan](Docs/06_Experimental_and_Evaluation_Plan.md) | 4 feature experiments × 5 models, metrics |
 | 07 | [Leakage & Reproducibility Protocol](Docs/07_Leakage_Reproducibility_Protocol.md) | Anti-leakage rules, splitting strategy, seed policy |
 | 08 | [Limitations & Open Questions](Docs/08_Limitations_and_Open_Questions.md) | Confirmed limitations, open questions, known gaps |
-| 09 | [Professor Approval Summary](Docs/09_Professor_Approval_Summary.md) | One-page summary + questions for supervisor |
+
 
 ---
 
 ## Dataset Setup
 
-Dataset files are not tracked by git. To reproduce the environment:
+Raw dataset files are **not tracked by git** (they are too large and must be obtained from the dataset authors).
 
-1. Download **MalDroid2020** from the official source and place files at:
-   ```
-   Dataset/MalDroid2020/Static/feature_vectors_static.csv
-   Dataset/MalDroid2020/Dynamic/
-   ```
-2. Download **AndMal2020** and place files at:
-   ```
-   Dataset/AndMal2020/Static/
-   Dataset/AndMal2020/Dynamic/
-   ```
+Full setup instructions, required paths, and class mappings: **[docs/DATASET_SETUP.md](docs/DATASET_SETUP.md)**
 
-Refer to [`Docs/02_Deep_Dataset_Forensic_Findings.md`](Docs/02_Deep_Dataset_Forensic_Findings.md) for known issues with the raw files (missing headers, mixed column types, near-duplicates) that must be handled before any code runs.
+**Quick summary:**
+
+```
+Dataset/
+├── MalDroid2020/Static/feature_vectors_static.csv       ← 568 MB
+├── MalDroid2020/Dynamic/feature_vectors_syscalls_*.csv  ← 14 MB + 11 MB
+└── AndMal2020/Static/ + AndMal2020/Dynamic/             ← ~6.5 GB
+```
+
+> ⚠️ `Dataset/CICInvestAndMal2019/` (if present locally, ~919 MB) is **not used** by this pipeline.
+
+---
+
+## Getting Started — Clone & Data
+
+```bash
+# 1. Clone
+git clone <repository-url>
+cd App-Malware-CNS-Project
+
+# 2. Install Git LFS (one-time per machine)
+git lfs install
+
+# 3. Pull large shared artifacts (static: 79 MB, fused: 87 MB)
+git lfs pull
+
+# 4. Install Python dependencies
+pip install -r requirements.txt
+```
+
+After cloning, all Group 3 shared artifacts are available under `runs/real/` — **other model groups do not need to run the pipeline**. See [docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md).
+
+For a full explanation of what is stored in Git, Git LFS, and external storage, see **[docs/GITHUB_DATA_AND_ARTIFACTS.md](docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
 
 ---
 

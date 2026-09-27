@@ -1,0 +1,210 @@
+{
+  "stage01_audit": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T17:37:59.415603+00:00",
+    "duration_sec": 361.73,
+    "config_hash": "1a7746bfc5534b81",
+    "artifacts": {
+      "report_path": "<project_root>//runs/real/reports/stage01_data_audit.json"
+    }
+  },
+  "stage02_manifest": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T17:38:27.900589+00:00",
+    "duration_sec": 28.48,
+    "config_hash": "1da630432c4eb455",
+    "artifacts": {
+      "maldroid_manifest": "<project_root>//runs/real/manifests/maldroid_manifest.parquet",
+      "andmal_manifest": "<project_root>//runs/real/manifests/andmal_manifest.parquet",
+      "maldroid_rows": 11598,
+      "andmal_rows": 357805,
+      "andmal_rows_mapped_to_5class": 310752
+    }
+  },
+  "stage03_typing": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T17:40:33.144313+00:00",
+    "duration_sec": 125.24,
+    "config_hash": "064386d4e20c4706",
+    "artifacts": {
+      "typing_report": "<project_root>//runs/real/artifacts/stage03_static_feature_types.json",
+      "usable_numeric_columns_list": "<project_root>//runs/real/artifacts/stage03_static_usable_numeric_columns.json",
+      "type_counts": {
+        "unusable_all_missing": 18931,
+        "binary_numeric": 31317,
+        "count_or_continuous_numeric": 335,
+        "zero_variance_numeric": 22,
+        "high_cardinality_string": 4,
+        "categorical_string": 11,
+        "identity_row_index": 1
+      },
+      "usable_numeric_count": 31652,
+      "dropped_count": 18968
+    }
+  },
+  "stage04_split": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:26:34.694580+00:00",
+    "duration_sec": 1.28,
+    "config_hash": "a0fb76475e512ac5",
+    "artifacts": {
+      "split_manifest": "<project_root>//runs/real/manifests/maldroid_split_manifest.parquet",
+      "split_counts": {
+        "train": 9281,
+        "test": 1161,
+        "val": 1156
+      },
+      "seed": 42,
+      "duplicate_rows_grouped": 77,
+      "cross_class_duplicate_conflicts": "<project_root>//runs/real/reports/stage04_cross_class_duplicate_conflicts.json",
+      "cross_class_duplicate_conflict_count": 3
+    }
+  },
+  "stage05_static": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T18:21:38.395057+00:00",
+    "duration_sec": 175.33,
+    "config_hash": "b045c9a6f08d89fb",
+    "artifacts": {
+      "static_features": "<project_root>//runs/real/artifacts/stage05_static_features.parquet",
+      "scaler_artifact": "<project_root>//runs/real/artifacts/stage05_static_scaler.joblib",
+      "usable_columns": 31652,
+      "rows": 11598
+    }
+  },
+  "stage06_dynamic": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T18:21:40.014289+00:00",
+    "duration_sec": 1.6,
+    "config_hash": "831877dcadd614d8",
+    "artifacts": {
+      "dynamic_139": {
+        "features": "<project_root>//runs/real/artifacts/stage06_dynamic_139_features.parquet",
+        "scaler": "<project_root>//runs/real/artifacts/stage06_dynamic_139_scaler.joblib",
+        "feature_count": 139,
+        "rows": 11598
+      },
+      "dynamic_470": {
+        "features": "<project_root>//runs/real/artifacts/stage06_dynamic_470_features.parquet",
+        "scaler": "<project_root>//runs/real/artifacts/stage06_dynamic_470_scaler.joblib",
+        "feature_count": 470,
+        "rows": 11598
+      }
+    }
+  },
+  "stage07_fusion": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T18:24:28.412513+00:00",
+    "duration_sec": 168.4,
+    "config_hash": "5a13b2304551ff52",
+    "artifacts": {
+      "fused_features": "<project_root>//runs/real/artifacts/stage07_fused_features.parquet",
+      "rows": 11598,
+      "static_columns": 63304,
+      "dynamic_columns": 940
+    }
+  },
+  "stage08_selection": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T19:05:33.125297+00:00",
+    "duration_sec": 2464.7,
+    "config_hash": "8be2c58ad177170a",
+    "artifacts": {
+      "selection_report": "<project_root>//runs/real/artifacts/stage08_feature_selection.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage09_imbalance": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T19:10:21.893690+00:00",
+    "duration_sec": 288.76,
+    "config_hash": "349bf51577bd6a3b",
+    "artifacts": {
+      "imbalance_report": "<project_root>//runs/real/artifacts/stage09_imbalance_report.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage11_train": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T19:10:27.400224+00:00",
+    "duration_sec": 5.5,
+    "config_hash": "5fae9a2f1d9688f0",
+    "artifacts": {
+      "training_results": "<project_root>//runs/real/metrics/stage11_training_results.json",
+      "models_trained": [
+        "lightgbm"
+      ],
+      "modality": "dynamic_470"
+    }
+  },
+  "stage12_eval": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-26T19:10:27.710042+00:00",
+    "duration_sec": 0.31,
+    "config_hash": "584d03ae55c91151",
+    "artifacts": {
+      "internal_evaluation": "<project_root>//runs/real/metrics/stage12_internal_evaluation.json",
+      "models_evaluated": [
+        "lightgbm"
+      ]
+    }
+  },
+  "stage13_ablation": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:32:11.977225+00:00",
+    "duration_sec": 323.76,
+    "config_hash": "7d2738438a5c3636",
+    "artifacts": {
+      "ablation_results": "<project_root>//runs/real/metrics/stage13_ablation_results.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage14_lock": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:36:19.424172+00:00",
+    "duration_sec": 247.43,
+    "config_hash": "847c8c3911667fc9",
+    "artifacts": {
+      "lock_manifest": "<project_root>//runs/real/artifacts/stage14_lock_manifest.json",
+      "frozen_model": "<project_root>//runs/real/artifacts/stage14_frozen_model.joblib",
+      "selected_model": "lightgbm",
+      "selected_modality": "fused",
+      "metrics_match_stage13": true
+    }
+  },
+  "stage15_external": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:36:19.530372+00:00",
+    "duration_sec": 0.1,
+    "config_hash": "f772cc9a9c61d59c",
+    "artifacts": {
+      "external_validation_report": "<project_root>//runs/real/metrics/stage15_external_validation.json",
+      "possible": false
+    }
+  },
+  "stage16_report": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:36:20.881345+00:00",
+    "duration_sec": 1.34,
+    "config_hash": "1c5d55c210da7f4a",
+    "artifacts": {
+      "final_report": "<project_root>//runs/real/reports/FINAL_REPORT.md",
+      "plots_dir": "<project_root>//runs/real/plots"
+    }
+  }
+}

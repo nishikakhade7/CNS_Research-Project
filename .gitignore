@@ -3,28 +3,132 @@
 # ============================================================
 
 # ------ Dataset files (too large / sensitive for GitHub) ----
+# Raw datasets must be obtained separately. See docs/DATASET_SETUP.md
 Dataset/
 *.csv
-*.parquet
-*.pkl
-*.pickle
 *.h5
 *.hdf5
-*.npz
+*.pkl
+*.pickle
 *.npy
+
+# ------ Parquet files (broadly ignored — shareable ones are
+#         explicitly un-ignored below via specific path rules) -
+*.parquet
+
+# ------ NumPy archives (broadly ignored — shareable SMOTE
+#         archives are explicitly un-ignored below) -----------
+*.npz
+
+# ------ Joblib / model artifacts (broadly ignored — final
+#         model and scalers explicitly un-ignored below) ------
+*.joblib
 
 # ------ Model artifacts & experiment outputs ----------------
 models/
-artifacts/
 outputs/
 results/
-runs/
 mlruns/
 *.pt
 *.pth
 *.onnx
-*.joblib
 *.bin
+
+# ------ Entire runs/ tree is ignored by default.
+#         Specific final shareable artifacts are explicitly
+#         un-ignored below using exact path exceptions.
+runs/
+
+# ============================================================
+#  GROUP 3 FINAL SHAREABLE ARTIFACTS
+#  These exact paths are un-ignored so they can be committed
+#  to Git (small files) or tracked via Git LFS (large files).
+#
+#  NOTE: Parent directories must also be un-ignored for Git
+#        to see the exceptions (! rules need directory access).
+# ============================================================
+
+# -- Directory scaffolding needed for exceptions to work ----
+!runs/
+!runs/real/
+!runs/real/artifacts/
+!runs/real/manifests/
+!runs/real/metrics/
+!runs/real/reports/
+!runs/real/plots/
+
+# -- Split manifest (mandatory for all model groups) ---------
+!runs/real/manifests/maldroid_split_manifest.parquet
+!runs/real/manifests/maldroid_manifest.parquet
+
+# -- AndMal manifest (via Git LFS — large) ------------------
+!runs/real/manifests/andmal_manifest.parquet
+
+# -- Feature selection report (mandatory for all groups) -----
+!runs/real/artifacts/stage08_feature_selection.json
+
+# -- Lock manifest + frozen LightGBM model ------------------
+!runs/real/artifacts/stage14_lock_manifest.json
+!runs/real/artifacts/stage14_frozen_model.joblib
+
+# -- Static features (via Git LFS — 79 MB) ------------------
+!runs/real/artifacts/stage05_static_features.parquet
+
+# -- Static scaler (via Git LFS — 6 MB) ---------------------
+!runs/real/artifacts/stage05_static_scaler.joblib
+
+# -- Dynamic-139 features + scaler (small) ------------------
+!runs/real/artifacts/stage06_dynamic_139_features.parquet
+!runs/real/artifacts/stage06_dynamic_139_scaler.joblib
+
+# -- Dynamic-470 features + scaler (small) ------------------
+!runs/real/artifacts/stage06_dynamic_470_features.parquet
+!runs/real/artifacts/stage06_dynamic_470_scaler.joblib
+
+# -- Fused features (via Git LFS — 87 MB) -------------------
+!runs/real/artifacts/stage07_fused_features.parquet
+
+# -- Imbalance / SMOTE artifacts ----------------------------
+!runs/real/artifacts/stage09_imbalance_report.json
+!runs/real/artifacts/stage09_smote_dynamic_139.npz
+!runs/real/artifacts/stage09_smote_dynamic_470.npz
+
+# -- Explicitly ignore large regeneratable internal artifacts
+#    (these become visible due to the !runs/real/artifacts/ exception
+#     but must NOT be accidentally tracked — regeneratable from pipeline)
+runs/real/artifacts/stage03_static_feature_types.json
+runs/real/artifacts/stage03_static_usable_numeric_columns.json
+
+# -- Evaluation metrics (all small JSON) --------------------
+!runs/real/metrics/stage11_training_results.json
+!runs/real/metrics/stage12_internal_evaluation.json
+!runs/real/metrics/stage13_ablation_results.json
+!runs/real/metrics/stage15_external_validation.json
+
+# -- Audit reports ------------------------------------------
+!runs/real/reports/stage01_data_audit.json
+!runs/real/reports/stage04_cross_class_duplicate_conflicts.json
+!runs/real/reports/FINAL_REPORT.md
+
+# -- Pipeline plots (small PNGs) ----------------------------
+!runs/real/plots/confusion_matrix_lightgbm.png
+!runs/real/plots/internal_macro_f1_by_model.png
+!runs/real/plots/modality_comparison_lightgbm.png
+!runs/real/plots/training_time_by_model.png
+
+# -- Run metadata (sanitized — no machine-specific paths) ---
+!runs/real/environment.json
+!runs/real/config.yaml.snapshot.json
+!runs/real/status.json
+
+# ============================================================
+#  Everything else in runs/ stays ignored:
+#    runs/real/logs/          ← runtime logs
+#    runs/real/checkpoints/   ← intermediate model checkpoints
+#    runs/real/artifacts/stage03_*  ← large regeneratable JSONs
+#    runs/smoke/              ← smoke-test run outputs
+#    runs/latest/             ← symlink run
+# ============================================================
 
 # ------ Python -----------------------------------------------
 __pycache__/
@@ -91,3 +195,9 @@ config_local.py
 *.tmp
 *.temp
 logs/
+
+# ------ IDE / tool lock files --------------------------------
+.claude/
+.pytest_cache/
+*.lock
+scheduled_tasks.lock

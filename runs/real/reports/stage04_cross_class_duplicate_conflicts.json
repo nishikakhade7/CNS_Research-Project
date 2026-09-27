@@ -1,0 +1,88 @@
+{
+  "count": 3,
+  "note": "Samples sharing an identical 470-feature dynamic vector but different ground-truth labels. Each group is kept entirely within one split (no leakage), but this represents a genuine label ambiguity ceiling in this feature representation, not a pipeline defect. Disclose when reporting downstream accuracy/macro-F1 figures.",
+  "conflicts": [
+    {
+      "dup_group": 5,
+      "sample_ids": [
+        5,
+        7261
+      ],
+      "classes": [
+        "Adware",
+        "Riskware"
+      ],
+      "split_votes": {
+        "train": 2
+      },
+      "resolved_split": "train"
+    },
+    {
+      "dup_group": 776,
+      "sample_ids": [
+        776,
+        8784
+      ],
+      "classes": [
+        "Adware",
+        "Riskware"
+      ],
+      "split_votes": {
+        "test": 1,
+        "train": 1
+      },
+      "resolved_split": "test"
+    },
+    {
+      "dup_group": 1257,
+      "sample_ids": [
+        1257,
+        1442,
+        1449,
+        1568,
+        1674,
+        1751,
+        2190,
+        2219,
+        2228,
+        2358,
+        2679,
+        2716,
+        2788,
+        2802,
+        2826,
+        2923,
+        2944,
+        3046,
+        3232,
+        3300,
+        6184,
+        7708,
+        8297,
+        8764,
+        8771,
+        8782,
+        9154,
+        9293,
+        9334,
+        9699,
+        9719,
+        10253,
+        11112,
+        11353,
+        11557
+      ],
+      "classes": [
+        "Banking",
+        "SMS Malware",
+        "Riskware",
+        "Benign"
+      ],
+      "split_votes": {
+        "train": 31,
+        "val": 4
+      },
+      "resolved_split": "train"
+    }
+  ]
+}
