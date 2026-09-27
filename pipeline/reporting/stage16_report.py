@@ -75,6 +75,12 @@ class FinalReportStage(Stage):
         with open(ctx.run_dir / "artifacts" / "stage14_lock_manifest.json", encoding="utf-8") as f:
             lock = json.load(f)
 
+        conflicts_path = ctx.run_dir / "reports" / "stage04_cross_class_duplicate_conflicts.json"
+        cross_class_conflicts = None
+        if conflicts_path.exists():
+            with open(conflicts_path, encoding="utf-8") as f:
+                cross_class_conflicts = json.load(f)
+
         # Plot 1: internal macro-F1 across the 5 models (primary modality)
         clf_names = [n for n in internal if n != "autoencoder"]
         macro_f1s = [internal[n]["macro_f1"] for n in clf_names]
@@ -104,11 +110,21 @@ class FinalReportStage(Stage):
                                     plots_dir / f"confusion_matrix_{name}.png")
 
         # Final markdown report
+        match_note = "MATCHES Stage 13" if lock.get("metrics_match_stage13") else "**DISCREPANCY vs Stage 13 — investigate**"
+        vtm = lock.get("verified_test_metrics")
         md_lines = [
             "# Final Reproducibility & Results Report",
             "",
             f"**Locked configuration:** model=`{lock['selected_model']}`, modality=`{lock['selected_modality']}`, "
-            f"features={lock['n_features']}, internal macro-F1 at selection={lock['internal_macro_f1_at_selection_time']:.4f}",
+            f"features={lock['n_features']}, class_weight_applied={lock.get('class_weight_applied')}, "
+            f"internal macro-F1 at selection={lock['internal_macro_f1_at_selection_time']:.4f}",
+        ]
+        if vtm:
+            md_lines.append(
+                f"**Independently re-verified on TEST after retrain:** macro-F1={vtm['macro_f1']:.4f}, "
+                f"accuracy={vtm['accuracy']:.4f} — {match_note}"
+            )
+        md_lines += [
             "",
             "## Internal Evaluation (MalDroid TEST split, dynamic_470)",
             "",
@@ -119,10 +135,26 @@ class FinalReportStage(Stage):
             r = internal[n]
             md_lines.append(f"| {n} | {r['accuracy']:.4f} | {r['macro_f1']:.4f} | {r['weighted_f1']:.4f} | {r['balanced_accuracy']:.4f} |")
 
-        md_lines += ["", "## Modality Ablation (LightGBM, TEST split)", "", "| Modality | Macro-F1 | Accuracy | Feature Count |", "|---|---|---|---|"]
+        md_lines += ["", "## Modality Ablation (LightGBM, TEST split)", "",
+                     "| Modality | Macro-F1 | Accuracy | Feature Count | Class Weight Applied |",
+                     "|---|---|---|---|---|"]
         for m in modalities:
             r = ablation[m]["lightgbm"]
-            md_lines.append(f"| {m} | {r['macro_f1']:.4f} | {r['accuracy']:.4f} | {r['feature_count']} |")
+            md_lines.append(f"| {m} | {r['macro_f1']:.4f} | {r['accuracy']:.4f} | {r['feature_count']} | {r.get('class_weight_applied')} |")
+
+        md_lines += ["", "## Known Data-Quality Disclosure", ""]
+        if cross_class_conflicts and cross_class_conflicts["count"] > 0:
+            md_lines.append(
+                f"**{cross_class_conflicts['count']} group(s)** of samples share an identical 470-feature "
+                f"dynamic vector but carry *different* ground-truth labels (e.g. same behavioral fingerprint "
+                f"labeled both Adware and Riskware). Each group is kept entirely within one split (no "
+                f"train/test leakage), but this represents a genuine label-ambiguity ceiling in this feature "
+                f"representation — disclose alongside any accuracy/macro-F1 figure derived from it."
+            )
+            for c in cross_class_conflicts["conflicts"]:
+                md_lines.append(f"- dup_group={c['dup_group']}: classes={c['classes']}, resolved to split=`{c['resolved_split']}`")
+        else:
+            md_lines.append("No cross-class duplicate-vector conflicts found in this run.")
 
         md_lines += ["", "## External (AndMal2020) Validation", ""]
         if external.get("external_validation_possible"):

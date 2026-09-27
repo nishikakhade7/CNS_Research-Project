@@ -160,9 +160,88 @@ Full details: [`Docs/08_Limitations_and_Open_Questions.md`](Docs/08_Limitations_
 
 ## Status
 
-> 🔬 **Research & planning phase.** No model training has been run yet.
-> All documents marked `PROPOSED` describe our intended approach, not implemented code.
-> Documents marked `CONFIRMED` reflect facts directly verified from the raw dataset files.
+> ✅ **Implementation complete.** Group 3 shared pipeline and LightGBM model have been fully executed on the real dataset (`runs/real/`). Final results are verified and documented in `docs/final/`.
+
+---
+
+## Group 3 — Data Pipeline & LightGBM
+
+Group 3 is responsible for the **complete shared data pipeline** and the **LightGBM classifier**.
+
+**Group 3 owns:**
+- Data auditing and integrity validation
+- Canonical manifest creation
+- Leakage-safe train/validation/test splitting
+- Feature typing (50,620 static columns classified)
+- Static preprocessing (StandardScaler, train-only)
+- Dynamic preprocessing (syscall-139 and syscall+Binder-470)
+- Static/dynamic feature fusion
+- Multi-method feature selection (mutual_info, chi2, LightGBM importance)
+- Imbalance handling (class weights + SMOTE artifacts for downstream groups)
+- Model-ready shared artifacts for all model groups
+- LightGBM implementation, training, evaluation, and model locking
+
+Other model groups (QDA, NuSVC, Balanced RF, Autoencoder) consume Group 3's shared artifacts — they do **not** rebuild the pipeline independently.
+
+### Final LightGBM Result
+
+| Metric | Value |
+|---|---|
+| **Test Accuracy** | **0.9819121447028424** |
+| **Test Macro-F1** | **0.9794806809300622** |
+| Test Balanced Accuracy | 0.9809595702907510 |
+| Modality | fused (static + dynamic-470) |
+| Features | 270 selected |
+| Model artifact | `runs/real/artifacts/stage14_frozen_model.joblib` |
+
+---
+
+## Group 3 Final Documentation
+
+### Core Pipeline
+
+| Document | Description |
+|---|---|
+| [01 — Final Data Pipeline](docs/final/01_FINAL_DATA_PIPELINE.md) | End-to-end pipeline: all 15 stages, integrity, splitting, preprocessing, fusion, selection |
+| [06 — Methodology](docs/final/06_METHODOLOGY.md) | Academic-style methodology covering all design decisions |
+| [07 — Presentation Architecture](docs/final/07_PRESENTATION_ARCHITECTURE.md) | Slide-ready content with Mermaid diagrams for all pipeline components |
+
+### Group 3 Results
+
+| Document | Description |
+|---|---|
+| [02 — LightGBM Results](docs/final/02_GROUP3_LIGHTGBM_RESULTS.md) | Full LightGBM config, per-class metrics, confusion matrix, modality comparison |
+| [05 — Final Results Summary](docs/final/05_FINAL_RESULTS_SUMMARY.md) | 5-minute executive summary of all results with embedded figures |
+| [04 — Dataset Limitations](docs/final/04_DATASET_LIMITATIONS.md) | Data quality disclosures, cross-class duplicates, scale limitations |
+| [03 — External Validation / AndMal](docs/final/03_EXTERNAL_VALIDATION_ANDMAL.md) | AndMal2020 validation attempt, feature-space incompatibility, exact finding |
+
+### Generated Figures
+
+13 publication-quality figures from the real run are in [`docs/final/assets/figures/`](docs/final/assets/figures/):
+
+| Figure | Description |
+|---|---|
+| `fig01_confusion_matrix_fused_test.png` | Final confusion matrix (fused model, TEST split) |
+| `fig02_per_class_metrics_fused_test.png` | Per-class Precision / Recall / F1 |
+| `fig03_modality_comparison.png` | Accuracy + Macro-F1 across all 4 modalities |
+| `fig04_class_distribution_splits.png` | Train / Val / Test class distributions |
+| `fig05_feature_type_distribution.png` | Static feature type breakdown (50,620 cols) |
+| `fig06_feature_selection_reduction.png` | Feature count reduction to 270 |
+| `fig07_stage_execution_times.png` | Execution time per pipeline stage |
+| `fig08_class_weights.png` | Class weights used in LightGBM |
+| `fig09_modality_metrics_comparison.png` | 3-metric comparison across modalities |
+| `fig10_static_dynamic_feature_split.png` | Static vs Dynamic contribution in 270 features |
+| `fig11_maldroid_class_distribution.png` | MalDroid2020 full class distribution |
+| `fig12_pipeline_durations_horizontal.png` | All 15 stage durations (horizontal) |
+| `fig13_top20_selected_features.png` | Top 20 selected features by origin |
+
+---
+
+## For Other Model Groups
+
+Groups 1, 2, 4, and 5 should use the **shared Group 3 preprocessing outputs** rather than independently rebuilding the data pipeline. Using the shared artifacts guarantees all models are evaluated on the same canonical split with the same preprocessing.
+
+**Integration guide:** [docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md)
 
 ---
 

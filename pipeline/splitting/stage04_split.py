@@ -9,6 +9,7 @@ train and test, which would silently inflate the reported test accuracy.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import numpy as np
@@ -103,6 +104,7 @@ class SplitStage(Stage):
             manifest.groupby("dup_group")["label_canonical"].nunique()
         )
         cross_class_gids = cross_class_groups[cross_class_groups > 1].index.tolist()
+        cross_class_conflicts = []
         if cross_class_gids:
             log.warning(
                 f"{len(cross_class_gids)} dup_group(s) span multiple classes "
@@ -118,10 +120,34 @@ class SplitStage(Stage):
                     f"  dup_group={gid}: classes={classes_in_group}, "
                     f"split votes={current_splits.to_dict()} → reassigning all to '{majority_split}'"
                 )
+                # Disclosed data-quality finding (found during forensic audit of the ~98%
+                # result): a handful of samples share an identical 470-feature vector but
+                # carry different ground-truth labels — a genuine ambiguity in the raw
+                # dataset, not a pipeline defect. Persisted here (not just logged) so any
+                # report using downstream metrics can disclose it rather than bury it.
+                cross_class_conflicts.append({
+                    "dup_group": int(gid),
+                    "sample_ids": [int(s) for s in member_sids],
+                    "classes": classes_in_group,
+                    "split_votes": {k: int(v) for k, v in current_splits.to_dict().items()},
+                    "resolved_split": majority_split,
+                })
                 for sid in member_sids:
                     split_assignment.loc[sid] = majority_split
             manifest["_split_tmp"] = manifest["sample_id"].map(split_assignment)
         manifest.drop(columns=["_split_tmp"], inplace=True)
+
+        conflicts_path = ctx.run_dir / "reports" / "stage04_cross_class_duplicate_conflicts.json"
+        with open(conflicts_path, "w", encoding="utf-8") as f:
+            json.dump({
+                "count": len(cross_class_conflicts),
+                "note": ("Samples sharing an identical 470-feature dynamic vector but different "
+                         "ground-truth labels. Each group is kept entirely within one split (no "
+                         "leakage), but this represents a genuine label ambiguity ceiling in this "
+                         "feature representation, not a pipeline defect. Disclose when reporting "
+                         "downstream accuracy/macro-F1 figures."),
+                "conflicts": cross_class_conflicts,
+            }, f, indent=2)
 
         manifest["split"] = manifest["sample_id"].map(split_assignment)
         assert manifest["split"].isna().sum() == 0, "every sample must receive a split assignment"
@@ -144,4 +170,6 @@ class SplitStage(Stage):
             "split_counts": {str(k): int(v) for k, v in counts.items()},
             "seed": seed,
             "duplicate_rows_grouped": int(n_dupe_rows),
+            "cross_class_duplicate_conflicts": str(conflicts_path),
+            "cross_class_duplicate_conflict_count": len(cross_class_conflicts),
         }

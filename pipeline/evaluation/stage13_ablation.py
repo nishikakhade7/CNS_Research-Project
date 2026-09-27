@@ -13,6 +13,7 @@ import json
 import time
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from pipeline.adapters import lightgbm_adapter
@@ -25,6 +26,16 @@ from pipeline.selection.stage08_selection import MODALITY_ARTIFACTS, _get_labels
 log = get_stage_logger("stage13_ablation")
 
 DEFAULT_TREE_K = 270
+
+
+def load_class_weights(ctx: StageContext, modality: str) -> dict[str, float]:
+    """Load Stage 09's train-only-computed class weights for a modality. Shared by
+    Stage 13 and Stage 14 so both apply the SAME weighting Stage 11 already uses —
+    previously Stage 13/14 silently trained unweighted despite config.imbalance.strategy
+    being 'class_weight', found during forensic audit of the reported ~98% result."""
+    with open(ctx.run_dir / "artifacts" / "stage09_imbalance_report.json", encoding="utf-8") as f:
+        imb = json.load(f)[modality]
+    return dict(imb["class_weights"].items())
 
 
 def _run_modality(modality: str, cfg: dict, ctx: StageContext, gpu_verified: bool) -> dict[str, Any]:
@@ -45,16 +56,24 @@ def _run_modality(modality: str, cfg: dict, ctx: StageContext, gpu_verified: boo
     y_train = y_all[train_mask].to_numpy()
     y_test = y_all[test_mask].to_numpy()
 
+    apply_weights = cfg["imbalance"]["strategy"] == "class_weight"
+    sample_weight = None
+    if apply_weights:
+        class_weight = load_class_weights(ctx, modality)
+        sample_weight = np.array([class_weight[y] for y in y_train])
+
     raw_cols = ranked[: min(DEFAULT_TREE_K, len(ranked))]
     model, device = lightgbm_adapter.build_model(cfg, gpu_verified)
     t0 = time.time()
-    model.fit(df.loc[train_mask, raw_cols].to_numpy(), y_train)
+    model.fit(df.loc[train_mask, raw_cols].to_numpy(), y_train, sample_weight=sample_weight)
     train_time = time.time() - t0
     preds = model.predict(df.loc[test_mask, raw_cols].to_numpy())
     report = {**full_classification_report(y_test, preds, labels),
-              "feature_count": len(raw_cols), "train_time_sec": round(train_time, 3), "device": device}
+              "feature_count": len(raw_cols), "train_time_sec": round(train_time, 3), "device": device,
+              "class_weight_applied": apply_weights}
 
-    log.info(f"[{modality}] lightgbm macro_f1={report['macro_f1']:.4f} accuracy={report['accuracy']:.4f}")
+    log.info(f"[{modality}] lightgbm macro_f1={report['macro_f1']:.4f} accuracy={report['accuracy']:.4f} "
+             f"(class_weight_applied={apply_weights})")
     return {"lightgbm": report}
 
 
@@ -63,7 +82,8 @@ class AblationStage(Stage):
     depends_on = ["stage08_selection", "stage09_imbalance"]
 
     def config_section(self, cfg: dict) -> dict:
-        return {"modalities": cfg["modalities"], "models": {"lightgbm": cfg["models"]["lightgbm"]}}
+        return {"modalities": cfg["modalities"], "models": {"lightgbm": cfg["models"]["lightgbm"]},
+                "imbalance": cfg["imbalance"]}
 
     def run(self, ctx: StageContext) -> dict[str, Any]:
         cfg = ctx.cfg
