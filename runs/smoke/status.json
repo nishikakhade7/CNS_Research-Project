@@ -1,0 +1,209 @@
+{
+  "stage01_audit": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.193754+00:00",
+    "duration_sec": 0.21,
+    "config_hash": "c9ed5d920c9b46ec",
+    "artifacts": {
+      "report_path": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\reports\\stage01_data_audit.json"
+    }
+  },
+  "stage02_manifest": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.260942+00:00",
+    "duration_sec": 0.06,
+    "config_hash": "73fa10291f2904ef",
+    "artifacts": {
+      "maldroid_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\manifests\\maldroid_manifest.parquet",
+      "andmal_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\manifests\\andmal_manifest.parquet",
+      "maldroid_rows": 100,
+      "andmal_rows": 33,
+      "andmal_rows_mapped_to_5class": 33
+    }
+  },
+  "stage03_typing": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.280939+00:00",
+    "duration_sec": 0.02,
+    "config_hash": "6db24659acaf2107",
+    "artifacts": {
+      "typing_report": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage03_static_feature_types.json",
+      "usable_numeric_columns_list": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage03_static_usable_numeric_columns.json",
+      "type_counts": {
+        "binary_numeric": 5,
+        "count_or_continuous_numeric": 5,
+        "categorical_string": 3,
+        "high_cardinality_string": 1,
+        "unusable_all_missing": 1,
+        "identity_row_index": 1
+      },
+      "usable_numeric_count": 10,
+      "dropped_count": 5
+    }
+  },
+  "stage04_split": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.388075+00:00",
+    "duration_sec": 0.11,
+    "config_hash": "c35e91aa50b7b680",
+    "artifacts": {
+      "split_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\manifests\\maldroid_split_manifest.parquet",
+      "split_counts": {
+        "train": 80,
+        "val": 11,
+        "test": 9
+      },
+      "seed": 42,
+      "duplicate_rows_grouped": 2,
+      "cross_class_duplicate_conflicts": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\reports\\stage04_cross_class_duplicate_conflicts.json",
+      "cross_class_duplicate_conflict_count": 0
+    }
+  },
+  "stage05_static": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.423025+00:00",
+    "duration_sec": 0.03,
+    "config_hash": "ae4b90b0027bafe9",
+    "artifacts": {
+      "static_features": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage05_static_features.parquet",
+      "scaler_artifact": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage05_static_scaler.joblib",
+      "usable_columns": 10,
+      "rows": 100
+    }
+  },
+  "stage06_dynamic": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.472986+00:00",
+    "duration_sec": 0.05,
+    "config_hash": "5735f1c17c831fb6",
+    "artifacts": {
+      "dynamic_139": {
+        "features": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage06_dynamic_139_features.parquet",
+        "scaler": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage06_dynamic_139_scaler.joblib",
+        "feature_count": 8,
+        "rows": 100
+      },
+      "dynamic_470": {
+        "features": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage06_dynamic_470_features.parquet",
+        "scaler": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage06_dynamic_470_scaler.joblib",
+        "feature_count": 10,
+        "rows": 100
+      }
+    }
+  },
+  "stage07_fusion": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:49.500033+00:00",
+    "duration_sec": 0.03,
+    "config_hash": "60800f8cfbe9e0bc",
+    "artifacts": {
+      "fused_features": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage07_fused_features.parquet",
+      "rows": 100,
+      "static_columns": 20,
+      "dynamic_columns": 20
+    }
+  },
+  "stage08_selection": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:50.494654+00:00",
+    "duration_sec": 0.99,
+    "config_hash": "8307a30a5fde346a",
+    "artifacts": {
+      "selection_report": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage08_feature_selection.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage09_imbalance": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:50.608283+00:00",
+    "duration_sec": 0.11,
+    "config_hash": "a3df89eba8eac167",
+    "artifacts": {
+      "imbalance_report": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage09_imbalance_report.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage11_train": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:51.318953+00:00",
+    "duration_sec": 0.71,
+    "config_hash": "302041cdd2928109",
+    "artifacts": {
+      "training_results": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\metrics\\stage11_training_results.json",
+      "models_trained": [
+        "lightgbm"
+      ],
+      "modality": "dynamic_470"
+    }
+  },
+  "stage12_eval": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:51.345462+00:00",
+    "duration_sec": 0.02,
+    "config_hash": "cf31663e9f0b795a",
+    "artifacts": {
+      "internal_evaluation": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\metrics\\stage12_internal_evaluation.json",
+      "models_evaluated": [
+        "lightgbm"
+      ]
+    }
+  },
+  "stage13_ablation": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:51.771308+00:00",
+    "duration_sec": 0.42,
+    "config_hash": "45c839c1c95a256b",
+    "artifacts": {
+      "ablation_results": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\metrics\\stage13_ablation_results.json",
+      "modalities": [
+        "static",
+        "dynamic_139",
+        "dynamic_470",
+        "fused"
+      ]
+    }
+  },
+  "stage14_lock": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:52.647317+00:00",
+    "duration_sec": 0.87,
+    "config_hash": "606fcaf6fb2126ce",
+    "artifacts": {
+      "lock_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage14_lock_manifest.json",
+      "frozen_model": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage14_frozen_model.joblib",
+      "selected_model": "lightgbm",
+      "selected_modality": "dynamic_139",
+      "metrics_match_stage13": true
+    }
+  },
+  "stage15_external": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:52.655311+00:00",
+    "duration_sec": 0.0,
+    "config_hash": "c0358c5ec783e18c",
+    "artifacts": {
+      "external_validation_report": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\metrics\\stage15_external_validation.json",
+      "possible": false
+    }
+  },
+  "stage16_report": {
+    "status": "SUCCESS",
+    "start_time": "2026-09-27T06:24:53.322747+00:00",
+    "duration_sec": 0.66,
+    "config_hash": "4ef720fe1637b5ad",
+    "artifacts": {
+      "final_report": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\reports\\FINAL_REPORT.md",
+      "plots_dir": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\plots"
+    }
+  }
+}

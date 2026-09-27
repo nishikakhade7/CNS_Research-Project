@@ -1,0 +1,30 @@
+{
+  "type_counts": {
+    "binary_numeric": 5,
+    "count_or_continuous_numeric": 5,
+    "categorical_string": 3,
+    "high_cardinality_string": 1,
+    "unusable_all_missing": 1,
+    "identity_row_index": 1
+  },
+  "usable_numeric_columns": 10,
+  "dropped_columns": 5,
+  "column_types": {
+    "idx": "identity_row_index",
+    "binary_flag_0": "binary_numeric",
+    "binary_flag_1": "binary_numeric",
+    "binary_flag_2": "binary_numeric",
+    "binary_flag_3": "binary_numeric",
+    "binary_flag_4": "binary_numeric",
+    "count_feat_0": "count_or_continuous_numeric",
+    "count_feat_1": "count_or_continuous_numeric",
+    "count_feat_2": "count_or_continuous_numeric",
+    "count_feat_3": "count_or_continuous_numeric",
+    "count_feat_4": "count_or_continuous_numeric",
+    "package_name_like": "categorical_string",
+    "another_string_col": "categorical_string",
+    "third_string_col": "categorical_string",
+    "high_cardinality_id": "high_cardinality_string",
+    "always_zero": "unusable_all_missing"
+  }
+}

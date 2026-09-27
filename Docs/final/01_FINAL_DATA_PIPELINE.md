@@ -83,7 +83,7 @@ flowchart TD
     S04 --> S05["Stage 05 — Static Preprocessing\n175.3 s\nStandardScaler fit on TRAIN ONLY\nOutput: 11,598 × 31,652 Parquet"]
     S04 --> S06["Stage 06 — Dynamic Preprocessing\n1.6 s\nStandardScaler fit on TRAIN ONLY\nDynamic-139 · Dynamic-470"]
 
-    S05 --> S07["Stage 07 — Fusion\n168.4 s\nStatic + Dynamic-470 concatenated row-wise\nOutput: 11,598 × 64,244 Parquet"]
+    S05 --> S07["Stage 07 — Fusion\n168.4 s\nStatic + Dynamic-470 concatenated row-wise\nOutput: 11,598 × 64,247 Parquet"]
     S06 --> S07
 
     S07 --> S08["Stage 08 — Feature Selection\n2,464.7 s\nmutual_info · chi2 · lightgbm_importance\nK ∈ {50, 100, 270} × 4 modalities · TRAIN-ONLY fit"]
@@ -249,7 +249,7 @@ Static and dynamic-470 preprocessed representations are concatenated row-wise in
 
 **Why fusion is valid on MalDroid:** Both the static and dynamic-470 files share the same 11,598-sample population in the same row order (verified empirically: matching row counts and per-class distributions).
 
-**Fusion output:** `stage07_fused_features.parquet` — 11,598 rows × 64,244 columns (91.6 MB).  
+**Fusion output:** `stage07_fused_features.parquet` — 11,598 rows × 64,247 columns (87.3 MB).  
 - Static contributes 63,304 columns (31,652 raw + 31,652 scaled)  
 - Dynamic-470 contributes 940 columns (470 raw + 470 scaled)
 

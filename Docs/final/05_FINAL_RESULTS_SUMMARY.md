@@ -27,7 +27,7 @@ flowchart LR
     M --> EV["External Validation\nAndMal2020"]
 
     P --> |"Stage 04\nSeed 42"| SP["Stratified Split\n80/10/10"]
-    P --> |"Stage 08\nTrain-only"| FS["Feature Selection\n270 from 64,244"]
+    P --> |"Stage 08\nTrain-only"| FS["Feature Selection\n270 from 64,247"]
     P --> |"Stage 05-07"| FE["Preprocessing\n& Fusion"]
 
     EV --> EX["❌ Not possible\n0/270 features matched"]
@@ -144,7 +144,7 @@ No test-set information was used in any fitting step.
 
 ## I. Main Feature Findings
 
-- 270 features selected from 64,244 total (fused) columns
+- 270 features selected from 64,247 total (fused) columns
 - 152 static + 118 dynamic-470 features in the locked contract
 - Top discriminative static features: permission flags, intent action indicators, sensitive API call indicators, numeric metadata
 - Top discriminative dynamic features: low-level syscall frequencies, Binder/IPC call patterns, network/filesystem access patterns

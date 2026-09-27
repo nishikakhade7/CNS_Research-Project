@@ -1,0 +1,9 @@
+{
+  "lightgbm": {
+    "device_used": "cpu",
+    "feature_count": 8,
+    "train_time_sec": 0.035,
+    "inference_time_sec": 0.003,
+    "val_accuracy": 0.09090909090909091
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "maldroid": {
+    "dynamic_139": {
+      "rows": 100,
+      "feature_columns": 8,
+      "label_counts": {
+        "1": 20,
+        "2": 20,
+        "3": 20,
+        "4": 20,
+        "5": 20
+      },
+      "missing_values_total": 0,
+      "zero_variance_feature_columns": 0,
+      "exact_duplicate_rows": 2,
+      "file_fingerprint_sha256_prefix": "b2139bf9131eada9",
+      "file_size_bytes": 2629
+    },
+    "dynamic_470": {
+      "rows": 100,
+      "feature_columns": 10,
+      "label_counts": {
+        "1": 20,
+        "2": 20,
+        "3": 20,
+        "4": 20,
+        "5": 20
+      },
+      "missing_values_total": 0,
+      "zero_variance_feature_columns": 0,
+      "exact_duplicate_rows": 2,
+      "file_fingerprint_sha256_prefix": "6ef93aba5acaee98",
+      "file_size_bytes": 3206
+    },
+    "static_repaired": {
+      "rows": 100,
+      "feature_columns": 16,
+      "label_counts": {},
+      "columns_numeric_like_sampled": 12,
+      "columns_text_like_sampled": 4,
+      "provenance": "repaired from feature_vectors_static.csv (UTF-7 decode + header realignment + Class attached via ROW-ORDER alignment with the dynamic file \u2014 NOT a hash-based join; MalDroid static files carry no sample hash)",
+      "file_fingerprint_sha256_prefix": "7646a9b4c67c7229",
+      "file_size_bytes": 13286
+    }
+  },
+  "andmal": {
+    "static": {
+      "per_directory": {
+        "Benign": {
+          "Ben0": {
+            "rows": 6,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 6,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Ben1": {
+            "rows": 6,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 6,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          }
+        },
+        "Malicious": {
+          "Adware": {
+            "rows": 6,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 6,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Banker": {
+            "rows": 5,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 5,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "Riskware": {
+            "rows": 5,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 5,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          },
+          "SMS": {
+            "rows": 5,
+            "columns": 7,
+            "feature_columns": 6,
+            "unique_hashes": 5,
+            "internal_duplicate_hashes": 0,
+            "columns_with_non_numeric_values_sampled": 0
+          }
+        }
+      },
+      "total_rows": 33,
+      "total_unique_hashes": 31,
+      "cross_file_hash_overlaps": {
+        "Ben0 + Ben1": 1,
+        "Adware + Ben0": 1
+      },
+      "cross_category_label_conflicts": {
+        "count": 1,
+        "example_hashes": [
+          "HASH_BEN0_001"
+        ]
+      },
+      "note": "headerless files \u2014 column 0 is the sample hash; there is NO label column, label is derived from the source filename only. Overlap detection now spans ALL directories passed in together (fixed bug: previously Benign and Malicious were audited in separate calls and could never share a hash record)."
+    },
+    "dynamic": {
+      "per_file": {
+        "Adware_after_reboot_Cat": {
+          "rows": 6,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "Adware_before_reboot_Cat": {
+          "rows": 6,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "Banker_after_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "Banker_before_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "Riskware_after_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "Riskware_before_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "SMS_after_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        },
+        "SMS_before_reboot_Cat": {
+          "rows": 5,
+          "columns": 7,
+          "has_hash_category_family": true
+        }
+      },
+      "total_rows": 42,
+      "note": "malicious categories only \u2014 no benign dynamic file exists in this release; before/after files are NOT row-aligned, only Hash-joinable"
+    }
+  }
+}

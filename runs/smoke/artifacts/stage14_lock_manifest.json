@@ -1,0 +1,180 @@
+{
+  "selected_model": "lightgbm",
+  "selected_modality": "dynamic_139",
+  "feature_columns": [
+    "feat_139_7",
+    "feat_139_3",
+    "feat_139_2",
+    "feat_139_1",
+    "feat_139_4",
+    "feat_139_6",
+    "feat_139_0",
+    "feat_139_5"
+  ],
+  "n_features": 8,
+  "class_weight_applied": true,
+  "internal_macro_f1_at_selection_time": 0.16,
+  "verified_test_metrics": {
+    "accuracy": 0.2222222222222222,
+    "macro_f1": 0.16,
+    "weighted_f1": 0.17777777777777778,
+    "balanced_accuracy": 0.2,
+    "per_class": {
+      "Adware": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 2
+      },
+      "Banking": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 1
+      },
+      "Benign": {
+        "precision": 0.3333333333333333,
+        "recall": 0.5,
+        "f1": 0.4,
+        "support": 2
+      },
+      "Riskware": {
+        "precision": 0.3333333333333333,
+        "recall": 0.5,
+        "f1": 0.4,
+        "support": 2
+      },
+      "SMS Malware": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 2
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Adware",
+      "Banking",
+      "Benign",
+      "Riskware",
+      "SMS Malware"
+    ]
+  },
+  "metrics_match_stage13": true,
+  "metrics_match_tolerance": 0.01,
+  "retrain_time_sec": 0.037,
+  "frozen_artifact": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\smoke\\artifacts\\stage14_frozen_model.joblib",
+  "frozen_artifact_sha256_prefix": "2b71b2c27dea400a",
+  "config_snapshot": {
+    "seed": 42,
+    "paths": {
+      "dataset_root": "tests/fixtures/smoke",
+      "maldroid_static_repaired": "tests/fixtures/smoke/MalDroid/Static/static_repaired.parquet",
+      "maldroid_static_raw": "tests/fixtures/smoke/MalDroid/Static/static_repaired.parquet",
+      "maldroid_dynamic_139": "tests/fixtures/smoke/MalDroid/Dynamic/dynamic_139.csv",
+      "maldroid_dynamic_470": "tests/fixtures/smoke/MalDroid/Dynamic/dynamic_470.csv",
+      "andmal_static_benign": "tests/fixtures/smoke/AndMal/Static/Benign",
+      "andmal_static_malicious": "tests/fixtures/smoke/AndMal/Static/Malicious",
+      "andmal_dynamic": "tests/fixtures/smoke/AndMal/Dynamic/BeforeAndAfterReboot",
+      "runs_dir": "runs"
+    },
+    "split": {
+      "train_frac": 0.8,
+      "val_frac": 0.1,
+      "test_frac": 0.1,
+      "stratify_by": "label"
+    },
+    "label_map": {
+      "maldroid": {
+        "1": "Adware",
+        "2": "Banking",
+        "3": "SMS Malware",
+        "4": "Riskware",
+        "5": "Benign"
+      },
+      "andmal_to_maldroid": {
+        "Adware": "Adware",
+        "Banker": "Banking",
+        "SMS": "SMS Malware",
+        "Riskware": "Riskware",
+        "Ben0": "Benign",
+        "Ben1": "Benign"
+      }
+    },
+    "modalities": [
+      "static",
+      "dynamic_139",
+      "dynamic_470",
+      "fused"
+    ],
+    "feature_selection": {
+      "methods": [
+        "mutual_info",
+        "chi2",
+        "lightgbm_importance"
+      ],
+      "k_values": [
+        3,
+        5,
+        8
+      ],
+      "variance_threshold": 0.0
+    },
+    "imbalance": {
+      "strategy": "class_weight"
+    },
+    "models": {
+      "lightgbm": {
+        "n_estimators": 20,
+        "num_leaves": 7,
+        "learning_rate": 0.1,
+        "device_type": "cpu"
+      }
+    },
+    "andmal_external": {
+      "common_classes": [
+        "Benign",
+        "Adware",
+        "Banking",
+        "SMS Malware",
+        "Riskware"
+      ]
+    }
+  }
+}

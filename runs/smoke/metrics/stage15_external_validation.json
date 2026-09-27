@@ -1,0 +1,7 @@
+{
+  "external_validation_possible": false,
+  "required_features": 8,
+  "matched_by_name_in_andmal": 0,
+  "andmal_dynamic_columns_available": 7,
+  "reason": "The frozen model requires its exact trained feature columns to be present in AndMal2020 by name. MalDroid's dynamic features are syscall/binder names (e.g. process/IPC-level events); AndMal2020's dynamic features are memory/API/battery/logcat/process-count names \u2014 different instrumentation entirely. Zero-filling the missing columns was considered and rejected: it would silently change what the model is being asked to classify, not perform a real evaluation. This is reported as a genuine cross-dataset feature-space incompatibility, not fabricated as a passing external-validation score."
+}

@@ -1,0 +1,5 @@
+{
+  "count": 0,
+  "note": "Samples sharing an identical 470-feature dynamic vector but different ground-truth labels. Each group is kept entirely within one split (no leakage), but this represents a genuine label ambiguity ceiling in this feature representation, not a pipeline defect. Disclose when reporting downstream accuracy/macro-F1 figures.",
+  "conflicts": []
+}

@@ -8,6 +8,43 @@
 
 ---
 
+## Section 0 — How to Access Group 3 Artifacts
+
+All shareable artifacts are committed **directly to this repository** under `runs/real/`. No separate download server is needed.
+
+### Clone workflow
+
+```bash
+git clone <repository-url>
+cd App-Malware-CNS-Project
+git lfs install   # one-time per machine
+git lfs pull      # fetch the large LFS-managed artifacts
+```
+
+### Storage tiers
+
+| Artifact type | Storage | Available after |
+|---|---|---|
+| Small artifacts (manifests, JSONs, scalers, small Parquets) | Normal Git | `git clone` |
+| Large feature Parquets (79–87 MB) | **Git LFS** | `git lfs pull` |
+| Raw datasets (MalDroid2020, AndMal2020) | **External only** | Obtain from dataset authors — see [`docs/DATASET_SETUP.md`](DATASET_SETUP.md) |
+
+### Files in Git LFS (require `git lfs pull`)
+
+| File | Size | Notes |
+|---|---|---|
+| `runs/real/artifacts/stage05_static_features.parquet` | 79 MB | Full static features (11,598 × 63,306) |
+| `runs/real/artifacts/stage05_static_scaler.joblib` | 6 MB | Static StandardScaler |
+| `runs/real/artifacts/stage07_fused_features.parquet` | 87 MB | Fused features (11,598 × 64,247) |
+| `runs/real/manifests/andmal_manifest.parquet` | 15 MB | AndMal manifest |
+| `Docs/Android_Malware_Project_Full_Documentation.docx` | 0.9 MB | Binary documentation |
+
+> **Note:** LFS pointer files look like small text files (~130 bytes) until you run `git lfs pull`. If you load a Parquet and get a `ParquetInvalidFileError`, you are reading a pointer — run `git lfs pull` first.
+
+For a complete data and artifact reference, see **[docs/GITHUB_DATA_AND_ARTIFACTS.md](GITHUB_DATA_AND_ARTIFACTS.md)**.
+
+---
+
 ## Section 1 — Purpose
 
 Group 3 has built and executed the **complete shared data pipeline** for this project. Every model group works from the **same shared data foundation**:
