@@ -3,3 +3,7 @@ runs/real/artifacts/stage07_fused_features.parquet filter=lfs diff=lfs merge=lfs
 runs/real/artifacts/stage05_static_scaler.joblib filter=lfs diff=lfs merge=lfs -text
 runs/real/manifests/andmal_manifest.parquet filter=lfs diff=lfs merge=lfs -text
 Docs/Android_Malware_Project_Full_Documentation.docx filter=lfs diff=lfs merge=lfs -text
+runs/kronodroid/artifacts/kd01_audited_real_device.parquet filter=lfs diff=lfs merge=lfs -text
+runs/kronodroid/artifacts/kd05_features_scaled.parquet filter=lfs diff=lfs merge=lfs -text
+runs/kronodroid/manifests/kd02_manifest.parquet filter=lfs diff=lfs merge=lfs -text
+runs/kronodroid/manifests/kd04_split_manifest.parquet filter=lfs diff=lfs merge=lfs -text

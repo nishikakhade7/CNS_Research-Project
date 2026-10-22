@@ -56,6 +56,9 @@ runs/
 !runs/real/metrics/
 !runs/real/reports/
 !runs/real/plots/
+!runs/kronodroid/
+!runs/kronodroid/artifacts/
+!runs/kronodroid/manifests/
 
 # -- Split manifest (mandatory for all model groups) ---------
 !runs/real/manifests/maldroid_split_manifest.parquet
@@ -120,6 +123,26 @@ runs/real/artifacts/stage03_static_usable_numeric_columns.json
 !runs/real/environment.json
 !runs/real/config.yaml.snapshot.json
 !runs/real/status.json
+
+# ============================================================
+#  KRONODROID TRACK — SHAREABLE ARTIFACTS (see Docs/09)
+#  Trained model checkpoints (runs/kronodroid/checkpoints/) stay
+#  ignored, same as runs/real/checkpoints/ — no "locked final
+#  model" stage exists yet for this track (see Doc 09 Section 9).
+# ============================================================
+
+# -- Cleaned combined real_device data + scaled feature matrix
+#    (via Git LFS — 13-14 MB) --------------------------------
+!runs/kronodroid/artifacts/kd01_audited_real_device.parquet
+!runs/kronodroid/artifacts/kd05_features_scaled.parquet
+
+# -- Preprocessing scaler (small) ---------------------------
+!runs/kronodroid/artifacts/kd05_scaler.joblib
+
+# -- Sample manifest + leakage-safe split manifest (mandatory
+#    for all model groups; via Git LFS — ~6 MB each) --------
+!runs/kronodroid/manifests/kd02_manifest.parquet
+!runs/kronodroid/manifests/kd04_split_manifest.parquet
 
 # ============================================================
 #  Everything else in runs/ stays ignored:
