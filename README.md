@@ -19,10 +19,13 @@ The model is trained on one dataset and validated on a second, independently col
 
 | Dataset | Role | Apps | Classes | Static features | Dynamic features |
 |---|---|---|---|---|---|
-| **MalDroid2020** | Train & develop | 11,598 | 5 | 50,621 | 139 / 470 |
-| **AndMal2020** | External validation only | 357,805 | 14 + benign | 9,503 | 141 |
+| **MalDroid2020** | Train & develop (primary track — **closed, final**) | 11,598 | 5 | 50,621 | 139 / 470 |
+| **AndMal2020** | External validation only (**closed, final** — found incompatible) | 357,805 | 14 + benign | 9,503 | 141 |
+| **KronoDroid** | Second/parallel track — own pipeline, own entry point | 78,129 (real_device, cleaned) | binary (+ 35-family, not yet trained) | 185 | 290 |
 
 > ⚠️ Raw dataset files are **not committed to this repository** (sizes reach ~600 MB per file). See [Dataset Setup](#dataset-setup) below.
+>
+> 🆕 **KronoDroid is a separate pipeline** from everything above — its own config (`config/kronodroid.yaml`), its own orchestrator (`kronodroid_run.py`), its own stage code (`pipeline/kronodroid/`). It does **not** touch or depend on the MalDroid/AndMal pipeline described in the rest of this README. Jump to [KronoDroid Track](#kronodroid-track-second-dataset) below if that's what you're here for.
 
 ### MalDroid2020 — 5 Classes
 `Benign · Adware · Banking · SMS Malware · Riskware`
@@ -116,13 +119,14 @@ Full protocol: [`Docs/07_Leakage_Reproducibility_Protocol.md`](Docs/07_Leakage_R
 | # | Document | Contents |
 |---|---|---|
 | 01 | [Dataset Selection & Problem Statement](Docs/01_Dataset_Selection_and_Problem_Statement.md) | Why we switched from CIC-AndMal2017, dataset rationale |
-| 02 | [Deep Dataset Forensic Findings](Docs/02_Deep_Dataset_Forensic_Findings.md) | Verified facts about both datasets (row counts, duplicates, header issues) |
+| 02 | [Deep Dataset Forensic Findings](Docs/02_Deep_Dataset_Forensic_Findings.md) | Verified facts about all three datasets (row counts, duplicates, header issues) — **Part C = KronoDroid** |
 | 03 | [Dataset Comparison & Label Mapping](Docs/03_Dataset_Comparison_and_Label_Mapping.md) | Side-by-side table, AndMal→MalDroid category mapping |
 | 04 | [Proposed Data Preprocessing Pipeline](Docs/04_Proposed_Data_Preprocessing_Pipeline.md) | Steps 1–12: static, dynamic, and fusion branches with per-branch diagrams |
-| **05** | **[Proposed Model Architecture](Docs/05_Proposed_Model_Architecture.md)** ⬅ _start here for the full picture_ | All 18 pipeline steps, all 5 models, complete end-to-end diagram — the single system overview |
+| **05** | **[Proposed Model Architecture](Docs/05_Proposed_Model_Architecture.md)** ⬅ _start here for the MalDroid/AndMal pipeline_ | All 18 pipeline steps, all 5 models, complete end-to-end diagram — the single system overview |
 | 06 | [Experimental & Evaluation Plan](Docs/06_Experimental_and_Evaluation_Plan.md) | 4 feature experiments × 5 models, metrics |
 | 07 | [Leakage & Reproducibility Protocol](Docs/07_Leakage_Reproducibility_Protocol.md) | Anti-leakage rules, splitting strategy, seed policy |
 | 08 | [Limitations & Open Questions](Docs/08_Limitations_and_Open_Questions.md) | Confirmed limitations, open questions, known gaps |
+| **09** | **[KronoDroid Pipeline](Docs/09_KronoDroid_Pipeline.md)** ⬅ _start here for the KronoDroid pipeline_ | Second dataset track: forensic resolution, 9-stage architecture, LightGBM results, benchmark comparison |
 
 
 ---
@@ -139,7 +143,8 @@ Full setup instructions, required paths, and class mappings: **[Docs/DATASET_SET
 Dataset/
 ├── MalDroid2020/Static/feature_vectors_static.csv       ← 568 MB
 ├── MalDroid2020/Dynamic/feature_vectors_syscalls_*.csv  ← 14 MB + 11 MB
-└── AndMal2020/Static/ + AndMal2020/Dynamic/             ← ~6.5 GB
+├── AndMal2020/Static/ + AndMal2020/Dynamic/             ← ~6.5 GB
+└── KronoDroid/real_device/*.csv + emulator/*.csv        ← ~210 MB
 ```
 
 > ⚠️ `Dataset/CICInvestAndMal2019/` (if present locally, ~919 MB) is **not used** by this pipeline.
@@ -156,16 +161,64 @@ cd App-Malware-CNS-Project
 # 2. Install Git LFS (one-time per machine)
 git lfs install
 
-# 3. Pull large shared artifacts (static: 79 MB, fused: 87 MB)
+# 3. Pull ALL large shared artifacts — this ONE command covers both the
+#    MalDroid/AndMal pipeline (static: 79 MB, fused: 87 MB, andmal manifest: 15 MB)
+#    AND the KronoDroid pipeline (audited data + features: ~27 MB, manifests: ~12 MB).
+#    There is no separate LFS command for KronoDroid — `git lfs pull` gets everything.
 git lfs pull
 
 # 4. Install Python dependencies
 pip install -r requirements.txt
 ```
 
-After cloning, all Group 3 shared artifacts are available under `runs/real/` — **other model groups do not need to run the pipeline**. See [Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md).
+**⚠️ If you (or your AI agent) only ran `git clone` without `git lfs pull`:** the large `.parquet` files under `runs/real/` and `runs/kronodroid/` will look present but contain only small LFS *pointer text*, not real data — any `pandas.read_parquet` on them will fail or return garbage. Always run `git lfs pull` right after cloning, before touching any `runs/` artifact.
 
-For a full explanation of what is stored in Git, Git LFS, and external storage, see **[Docs/GITHUB_DATA_AND_ARTIFACTS.md](Docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
+After cloning, all Group 3 shared artifacts are available under `runs/real/` (MalDroid/AndMal) **and** `runs/kronodroid/` (KronoDroid) — **other model groups do not need to run either pipeline**. See [Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md](Docs/08_MODEL_GROUP_INTEGRATION_GUIDE.md).
+
+For a full explanation of what is stored in Git, Git LFS, and external storage — including the KronoDroid artifacts — see **[Docs/GITHUB_DATA_AND_ARTIFACTS.md](Docs/GITHUB_DATA_AND_ARTIFACTS.md)**.
+
+---
+
+## KronoDroid Track (Second Dataset)
+
+> 🆕 **This is a separate, parallel pipeline** — different entry point, different config, different stage code. It does not run as part of `one_run.py` and does not touch any MalDroid/AndMal artifact.
+
+| | MalDroid/AndMal pipeline | KronoDroid pipeline |
+|---|---|---|
+| Entry point | `one_run.py` | `kronodroid_run.py` |
+| Config | `config/default.yaml` / `config/smoke.yaml` | `config/kronodroid.yaml` |
+| Stage code | `pipeline/{audit,manifest,typing,splitting,static,dynamic,fusion,selection,imbalance,training,evaluation,external,reporting}/` | `pipeline/kronodroid/` |
+| Run output | `runs/real/`, `runs/smoke/` | `runs/kronodroid/` |
+| Shared infra reused | — | `pipeline/core/` only (Stage base class, config loader, path resolver, run logger) |
+
+**Run it:**
+```bash
+conda activate ml_cuda   # must match lightgbm 4.7.0 / sklearn 1.7.2 / pandas 2.3.3 (see runs/kronodroid/environment.json)
+python kronodroid_run.py --all     # runs all 9 stages, resumable
+python kronodroid_run.py --list    # see all stage names
+python kronodroid_run.py --stage kd09_eval   # run/re-run a single stage
+```
+
+Raw files expected at `Dataset/KronoDroid/real_device/*.csv` (not `emulator/` — see why below). Setup instructions: [Docs/DATASET_SETUP.md](Docs/DATASET_SETUP.md).
+
+**What it is:** a second, independent dataset — [KronoDroid](https://github.com/aleguma/kronodroid) (Guerra-Manzanares, Bahsi, Nõmm, *Computers & Security*, 2021) — added because MalDroid2020 (11,598 apps) was judged too small, while still being hybrid static+dynamic like MalDroid (not static-only, unlike the alternatives that were rejected).
+
+**Key forensic findings** (full detail: [Docs/02 Part C](Docs/02_Deep_Dataset_Forensic_Findings.md)):
+- Raw row counts initially looked ~2× the paper's published numbers — resolved as a `wc -l` line-counting artifact (embedded newlines in a quoted field); parsed correctly with `pandas.read_csv`, the counts match the paper exactly.
+- `real_device` and `emulator` are **not independent datasets** — 80% of apps appear in both. Only `real_device` is used.
+- 4 apps are mislabeled as both malware and legitimate in the source data — dropped.
+
+**Results** (binary malware/benign detection, LightGBM, held-out test set — full table: [Docs/09](Docs/09_KronoDroid_Pipeline.md)):
+
+| Model | F1 |
+|---|---|
+| Our LightGBM, full 475 features | **0.9842** |
+| Our LightGBM, top-50 features (replicating the cited benchmark paper's recipe) | 0.9790 |
+| Cited: Waheed & Qadir (2024), Random Forest | 0.9812 |
+
+**Not yet done** (stated, not faked): the family-level multi-class model (35 malware families + "Other") is not trained — only the binary detector.
+
+Full writeup: **[Docs/09_KronoDroid_Pipeline.md](Docs/09_KronoDroid_Pipeline.md)**.
 
 ---
 
@@ -183,7 +236,9 @@ Full details: [`Docs/08_Limitations_and_Open_Questions.md`](Docs/08_Limitations_
 
 ## Status
 
-> ✅ **Implementation complete.** Group 3 shared pipeline and LightGBM model have been fully executed on the real dataset (`runs/real/`). Final results are verified and documented in `docs/final/`.
+> ✅ **Implementation complete (MalDroid/AndMal track).** Group 3 shared pipeline and LightGBM model have been fully executed on the real dataset (`runs/real/`). Final results are verified and documented in `docs/final/`.
+>
+> ✅ **KronoDroid track — binary detection complete.** All 9 stages run end-to-end on the real data (`runs/kronodroid/`), documented in [Docs/09](Docs/09_KronoDroid_Pipeline.md). Family-level multi-class model is **not yet trained** — see that doc's "Explicitly not done" section.
 
 ---
 
@@ -272,6 +327,8 @@ Groups 1, 2, 4, and 5 should use the **shared Group 3 preprocessing outputs** ra
 
 - Mahdavifar et al., *MalDroid2020*, IEEE DASC 2020
 - Mahindru & Sangal, *AndMal2020*, 2021
+- Guerra-Manzanares, Bahsi, Nõmm, *KronoDroid: Time-based Hybrid-featured Dataset for Effective Android Malware Detection and Characterization*, Computers & Security, Vol 110, 102399, 2021
+- Waheed & Qadir, *Effective and Efficient Android Malware Detection and Category Classification Using the Enhanced KronoDroid Dataset*, Security and Communication Networks, 2024
 - Ke et al., *LightGBM*, NeurIPS 2017
 - Chen, Liaw & Breiman, *Balanced Random Forest*, UC Berkeley Tech Report 666, 2004
 - Schölkopf et al., *NuSVC*, Neural Computation 2000

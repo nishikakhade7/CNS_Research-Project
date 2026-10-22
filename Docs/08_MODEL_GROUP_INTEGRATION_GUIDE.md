@@ -6,6 +6,8 @@
 **Source:** `runs/real/` — completed Group 3 execution  
 **All artifact dimensions, column counts, and metrics verified against actual files**
 
+> 🆕 **Scope note:** this entire guide covers the **MalDroid2020/AndMal2020 pipeline only** (`runs/real/`, `one_run.py`). It does **not** cover the separate KronoDroid track (`runs/kronodroid/`, `kronodroid_run.py`) — that pipeline has no other-model-group consumption contract defined yet. See [Docs/09_KronoDroid_Pipeline.md](09_KronoDroid_Pipeline.md) and [GITHUB_DATA_AND_ARTIFACTS.md](GITHUB_DATA_AND_ARTIFACTS.md) if you're looking for KronoDroid artifacts specifically.
+
 ---
 
 ## Section 0 — How to Access Group 3 Artifacts
