@@ -7,14 +7,15 @@
 
 ## Required Datasets
 
-The pipeline uses **two** datasets:
+The pipeline uses **three** datasets:
 
 | Dataset | Role | Samples | Size (approx) |
 |---|---|---|---|
 | **MalDroid2020** | Primary — all model development | 11,598 apps | ~595 MB |
 | **AndMal2020** | External generalization analysis only | 357,805+ records | ~6.5 GB |
+| **KronoDroid** | Second/primary track — larger hybrid static+dynamic dataset, own pipeline | 78,137 raw rows (41,382 malware + 36,755 legitimate, real_device); 78,129 after dropping 8 rows for 4 label-conflict hashes | ~210 MB (real_device + emulator) |
 
-A third dataset (`CICInvestAndMal2019`) is present in some local copies but is **not used** by this pipeline.
+A fourth dataset (`CICInvestAndMal2019`) is present in some local copies but is **not used** by this pipeline.
 
 ---
 
@@ -109,6 +110,42 @@ Dataset/
 - AndMal2020 is used **only for external generalization analysis** (Stage 15) — never for training, validation, or preprocessing fitting
 - Only 5 of 14 AndMal categories map to MalDroid's 5-class taxonomy; unmappable categories are excluded
 - The AndMal dynamic representation is **incompatible** with the locked fused LightGBM model's feature space (different instrumentation framework — see `docs/final/03_EXTERNAL_VALIDATION_ANDMAL.md`)
+
+---
+
+## KronoDroid
+
+**Citation:** Guerra-Manzanares, Bahsi, Nõmm, *KronoDroid: Time-based Hybrid-featured Dataset for Effective Android Malware Detection and Characterization*, Computers & Security, Vol 110, 102399, 2021.
+
+**Official source:** `github.com/aleguma/kronodroid` (zip release, e.g. `kronodroid-main.zip`).
+
+### Required files
+
+```
+Dataset/
+└── KronoDroid/
+    ├── real_device/
+    │   ├── real_malware_v1.csv      ← 41,382 rows, 484 cols
+    │   └── real_legitimate_v1.csv   ← 36,755 rows, 484 cols
+    ├── emulator/
+    │   ├── emu_malware_v1.csv       ← 28,745 rows, 483 cols (documented, not used — see below)
+    │   └── emu_legitimate_v1.csv    ← 35,246 rows, 484 cols (documented, not used — see below)
+    └── raw/
+        └── kronodroid-main.zip      ← original release archive (optional to keep)
+```
+
+### Known issue: do not count rows with `wc -l` or any line-counting tool
+
+Every row's `Package` column contains an embedded newline character inside the CSV quoting, so physical-line-count tools report exactly ~2× the true row count (e.g. `wc -l` reports 82,764 for `real_malware_v1.csv`, which actually has 41,382 rows). **Always parse with `pandas.read_csv` or an equivalent quote-aware CSV parser.** Full forensic detail: [`Docs/02_Deep_Dataset_Forensic_Findings.md`](02_Deep_Dataset_Forensic_Findings.md), Part C.1.
+
+### Known issue: 4 label-conflict apps must be dropped
+
+4 `sha256` values are filed as malware **and** legitimate, consistently across both real_device and emulator captures (`home.nicole.app.image`, `com.omesoft.baccalc`, `com.ikags.ikagsrandomring`, `com.rocky.almanac`). These are upstream labeling defects — drop all rows for these 4 hashes before any split or training. Detail: Doc 02 Part C.5.
+
+### Usage in this project
+
+- **real_device is the primary track.** `emulator` is documented and present on disk but **excluded** from the primary pipeline: 80% of emulator apps (63,320 of 78,800 unique hashes across both views) are the *same* apps already in real_device, so it is not an independent second dataset — combining them would duplicate most samples under a different dynamic-behavior view, not add new ones. Reasoning in full: Doc 02 Part C.6.
+- Benchmark comparison target: Waheed & Qadir, *Effective and Efficient Android Malware Detection and Category Classification Using the Enhanced KronoDroid Dataset*, Security and Communication Networks, 2024 — used this same real_device split (independently verified the same 41,382/36,755 counts).
 
 ---
 

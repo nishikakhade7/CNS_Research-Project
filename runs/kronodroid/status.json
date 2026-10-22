@@ -1,0 +1,234 @@
+{
+  "kd01_audit": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:53:45.592356+00:00",
+    "duration_sec": 7.15,
+    "config_hash": "d25ac31a290ab800",
+    "artifacts": {
+      "raw_malware_rows": 41382,
+      "raw_legitimate_rows": 36755,
+      "raw_combined_rows": 78137,
+      "label_conflict_rows_dropped": 8,
+      "clean_combined_rows": 78129,
+      "n_columns": 484,
+      "audited_parquet": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\artifacts\\kd01_audited_real_device.parquet"
+    }
+  },
+  "kd02_manifest": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:54:14.896583+00:00",
+    "duration_sec": 2.54,
+    "config_hash": "be131f66f1d32570",
+    "artifacts": {
+      "n_samples": 78129,
+      "n_malware": 41378,
+      "n_benign": 36751,
+      "family_min_samples_threshold": 100,
+      "n_family_classes_kept": 35,
+      "n_family_classes_raw": 240,
+      "family_label_distribution_top10": {
+        "Benign": 36751,
+        "Airpush/StopSMS": 7775,
+        "SMSreg": 5019,
+        "Malap": 4055,
+        "Boxer": 3597,
+        "Other": 3033,
+        "Agent": 2934,
+        "FakeInst": 2384,
+        "Locker/SLocker Ransomware": 1846,
+        "BankBot": 1297
+      },
+      "manifest_parquet": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\manifests\\kd02_manifest.parquet"
+    }
+  },
+  "kd03_typing": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:54:30.087868+00:00",
+    "duration_sec": 0.37,
+    "config_hash": "83a2562463474b75",
+    "artifacts": {
+      "column_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\manifests\\kd03_column_manifest.json",
+      "dynamic_syscall_known_name": 217,
+      "dynamic_syscall_reserved_or_summary": 72,
+      "dynamic_behavioral": 1,
+      "static_permission": 166,
+      "static_permission_summary": 7,
+      "static_apk_structural": 12,
+      "metadata": 9,
+      "unclassified": 0,
+      "total_columns": 484,
+      "total_dynamic": 290,
+      "total_static": 185,
+      "paper_claimed_static": 200,
+      "paper_claimed_dynamic": 289
+    }
+  },
+  "kd04_split": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:55:04.561273+00:00",
+    "duration_sec": 0.52,
+    "config_hash": "6abab880ba7965a4",
+    "artifacts": {
+      "split_manifest": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\manifests\\kd04_split_manifest.parquet",
+      "n_train": 54691,
+      "n_val": 11720,
+      "n_test": 11718,
+      "split_label_counts": {
+        "test": {
+          "Benign": 5512,
+          "Malware": 6206
+        },
+        "train": {
+          "Benign": 25726,
+          "Malware": 28965
+        },
+        "val": {
+          "Benign": 5513,
+          "Malware": 6207
+        }
+      }
+    }
+  },
+  "kd05_preprocess": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:55:34.513245+00:00",
+    "duration_sec": 7.07,
+    "config_hash": "fe4ad27e68439647",
+    "artifacts": {
+      "features_parquet": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\artifacts\\kd05_features_scaled.parquet",
+      "scaler_joblib": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\artifacts\\kd05_scaler.joblib",
+      "n_feature_cols": 475,
+      "n_count_like_logged": 290,
+      "n_rows": 78129
+    }
+  },
+  "kd06_selection": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:56:58.186588+00:00",
+    "duration_sec": 57.49,
+    "config_hash": "4d4915c9fb2da894",
+    "artifacts": {
+      "rankings_json": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\artifacts\\kd06_feature_rankings.json",
+      "n_features_ranked": 475,
+      "top_k_candidates": [
+        30,
+        50,
+        100
+      ],
+      "et_mi_overlap_at_top50": 31
+    }
+  },
+  "kd07_imbalance": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:57:31.933180+00:00",
+    "duration_sec": 0.49,
+    "config_hash": "c2e4a13087053feb",
+    "artifacts": {
+      "train_n_malware": 28965,
+      "train_n_benign": 25726,
+      "train_imbalance_ratio": 1.1259,
+      "strategy_applied": "class_weight_balanced"
+    }
+  },
+  "kd08_train": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:58:11.606825+00:00",
+    "duration_sec": 23.61,
+    "config_hash": "672ede0d1a79746a",
+    "artifacts": {
+      "replication": {
+        "model_path": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\checkpoints\\kd08_model_replication.joblib",
+        "feature_cols": [
+          "READ_PHONE_STATE",
+          "SEND_SMS",
+          "ACCESS_WIFI_STATE",
+          "RECEIVE_BOOT_COMPLETED",
+          "WRITE_EXTERNAL_STORAGE",
+          "RECEIVE_SMS",
+          "READ_SMS",
+          "nr_permissions",
+          "SYSTEM_ALERT_WINDOW",
+          "GET_TASKS",
+          "dangerous",
+          "total_perm",
+          "getpriority",
+          "SYS_333",
+          "getrlimit",
+          "ACCESS_NETWORK_STATE",
+          "WAKE_LOCK",
+          "setrlimit",
+          "ACCESS_FINE_LOCATION",
+          "GET_ACCOUNTS",
+          "ACCESS_COARSE_LOCATION",
+          "fsync",
+          "SYS_339",
+          "CHANGE_WIFI_STATE",
+          "uname",
+          "socketpair",
+          "fstatfs64",
+          "normal",
+          "sigaction",
+          "MOUNT_UNMOUNT_FILESYSTEMS",
+          "write",
+          "read",
+          "sysinfo",
+          "recvfrom",
+          "signature",
+          "sigaltstack",
+          "getsockopt",
+          "SYS_315",
+          "NrIntReceiversActions",
+          "SYS_317",
+          "mprotect",
+          "prctl",
+          "futex",
+          "clone",
+          "FilesInsideAPK",
+          "SYS_329",
+          "setsockopt",
+          "epoll_ctl",
+          "READ_EXTERNAL_STORAGE",
+          "clock_gettime"
+        ],
+        "n_features": 50,
+        "best_iteration": 499
+      },
+      "full_standardized": {
+        "model_path": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\checkpoints\\kd08_model_full_standardized.joblib",
+        "n_features": 475,
+        "best_iteration": 478
+      }
+    }
+  },
+  "kd09_eval": {
+    "status": "SUCCESS",
+    "start_time": "2026-10-22T03:58:38.449358+00:00",
+    "duration_sec": 0.81,
+    "config_hash": "36c8ae2bde2e61e1",
+    "artifacts": {
+      "metrics_json": "C:\\Users\\Deep\\OneDrive\\Desktop\\Coding\\App-Malware-CNS-Project\\runs\\kronodroid\\metrics\\kd09_eval_metrics.json",
+      "cited_benchmark_binary": {
+        "source": "Waheed & Qadir (2024), Security and Communication Networks",
+        "model": "Random Forest (GridSearchCV-tuned)",
+        "accuracy": 0.9803,
+        "precision": 0.9851,
+        "recall": 0.9773,
+        "f1": 0.9812
+      },
+      "replication": {
+        "accuracy": 0.9779,
+        "precision": 0.9836,
+        "recall": 0.9745,
+        "f1": 0.979,
+        "n_test_samples": 11718
+      },
+      "full_standardized": {
+        "accuracy": 0.9834,
+        "precision": 0.9875,
+        "recall": 0.981,
+        "f1": 0.9842,
+        "n_test_samples": 11718
+      }
+    }
+  }
+}

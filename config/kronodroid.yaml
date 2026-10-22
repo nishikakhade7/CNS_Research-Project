@@ -1,0 +1,72 @@
+seed: 42
+
+paths:
+  dataset_root: "Dataset/KronoDroid"
+  kronodroid_real_malware: "Dataset/KronoDroid/real_device/real_malware_v1.csv"
+  kronodroid_real_legitimate: "Dataset/KronoDroid/real_device/real_legitimate_v1.csv"
+  kronodroid_emu_malware: "Dataset/KronoDroid/emulator/emu_malware_v1.csv"
+  kronodroid_emu_legitimate: "Dataset/KronoDroid/emulator/emu_legitimate_v1.csv"
+  runs_dir: "runs"
+
+# Known upstream labeling defects (Doc 02 Part C.5): same sha256 filed as BOTH malware
+# and legitimate, consistently across real_device AND emulator. Dropped unconditionally.
+label_conflict_hashes:
+  - "65ada6c192df23495825643d04236c0144114c0ae637e9946ddd2ac883303d36"
+  - "8ba8b904b7ea9f2b033acfab5276f2415b4386cd772cfb5663e7930e6fa85e22"
+  - "a71f168d8d8d3c6afa8916cc4a1bb1cdce582cdc6d90168d26fb96378703ff4f"
+  - "cf5b1cabd8da19cd1e9746fb5eb3e4f0b94b8b3795a5bdb4f4e4ef7171f31cc2"
+
+# real_device only (Doc 02 Part C.6): emulator shares 80% of apps with real_device and is
+# not an independent sample population. Not read by any stage in this config.
+dataset_track: "real_device"
+
+split:
+  # Deviates from Waheed & Qadir's 70/30 (binary split only, no held-out val — they used
+  # 5-fold CV on the 70% train instead). We keep this project's existing three-way
+  # discipline (MalDroid/AndMal both use train/val/test) so the val slice is itself a
+  # genuine held-out set, not a CV fold reused across model selection and final reporting.
+  train_frac: 0.70
+  val_frac: 0.15
+  test_frac: 0.15
+  stratify_by: "label_binary"
+  group_by: "sha256"
+
+label_map:
+  binary:
+    0: "Benign"
+    1: "Malware"
+  # Family-level multi-class scheme. NOT a replication of Waheed & Qadir's 15-category
+  # VirusTotal/engine-consensus taxonomy — we do not have their engine-consensus mapping
+  # table to re-derive it faithfully, and inventing one would violate this project's
+  # no-fabrication rule. Instead: our own documented contribution (Doc 09, Stage 07) —
+  # minimum-sample thresholding over the raw MalFamily long tail, with an explicit
+  # "Other" bucket, exactly where the cited paper flagged future work.
+  family_min_samples: 100
+
+feature_selection:
+  # Replicates Waheed & Qadir's filter-method approach as a baseline (ExtraTrees
+  # importance + mutual information), then compares top-K sizes they tested.
+  methods: ["extra_trees_importance", "mutual_info"]
+  top_k_candidates: [30, 50, 100]
+  scale_before_selection: "minmax"   # matches the cited paper's best config
+
+imbalance:
+  binary:
+    # Binary is near-balanced (1.13x, measured in Doc 02 C.2) — class_weight is sufficient,
+    # no synthetic oversampling needed.
+    strategy: "class_weight_balanced"
+  family:
+    # Severe long-tail (measured: top family 18.8%, many singleton families) — the one
+    # place the cited paper explicitly left as future work. Our contribution.
+    strategy: "min_sample_threshold_plus_class_weight"
+
+models:
+  lightgbm:
+    n_estimators: 500
+    learning_rate: 0.05
+    num_leaves: 63
+    max_depth: -1
+    objective: "binary"
+    class_weight: "balanced"
+    n_jobs: -1
+    random_state: 42
