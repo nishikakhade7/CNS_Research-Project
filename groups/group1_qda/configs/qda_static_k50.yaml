@@ -1,0 +1,32 @@
+project_root: ../../..
+
+dataset:
+  feature_path: runs/real/artifacts/stage05_static_features.parquet
+  label_source: runs/real/manifests/maldroid_split_manifest.parquet
+  label_column: label_canonical
+  split_source: runs/real/manifests/maldroid_split_manifest.parquet
+  split_column: split
+  split_values:
+    train: train
+    validation: val
+    test: test
+  sample_id_column: sample_id
+  feature_modality: static
+  allowed_labels: null
+  # Add dataset-specific metadata names here; common ID/label/split/file fields are
+  # excluded automatically as well.
+  metadata_columns: [Class, dup_group]
+
+feature_selection:
+  method: mutual_info
+  k: 50
+
+qda:
+  reg_param_candidates: [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
+
+random_seed: 42
+output_dir: outputs/qda_static_k50
+
+# Relative to this config file, via project_root.
+# Training creates a unique run subdirectory and never overwrites an existing run.
+run_id: null

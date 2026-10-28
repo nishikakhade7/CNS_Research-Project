@@ -1,0 +1,36 @@
+# Group 1 QDA — 80:20 stratified train/test experiment
+# Uses the pre-ranked top-50 mutual-information features (scaled columns)
+# from the stage08 feature-selection report. Memory-efficient: reads only
+# the required columns from the Parquet feature file.
+
+project_root: ../../..
+
+dataset:
+  feature_path: runs/real/artifacts/stage05_static_features.parquet
+  label_source: runs/real/manifests/maldroid_split_manifest.parquet
+  label_column: label_canonical
+  sample_id_column: sample_id
+  feature_modality: static
+  allowed_labels:
+    - Adware
+    - Banking
+    - Benign
+    - Riskware
+    - SMS Malware
+
+feature_selection:
+  selection_source: runs/real/artifacts/stage08_feature_selection.json
+  method: mutual_info
+  k: 50
+
+splitting:
+  # Override the existing three-way manifest split with an 80:20 stratified split
+  strategy: stratified_80_20
+  test_size: 0.2
+  stratify_column: label_canonical
+
+qda:
+  reg_param_candidates: [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
+
+random_seed: 42
+output_dir: groups/group1_qda/outputs/qda_80_20_experiment
