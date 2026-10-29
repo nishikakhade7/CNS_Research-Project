@@ -1,0 +1,365 @@
+{
+  "experiment_type": "group1_qda_80_20_stratified",
+  "timestamp": "20261029T041555Z",
+  "config_path": "C:\\Users\\rudra\\Downloads\\CNS_Research-Project\\groups\\group1_qda\\configs\\qda_static_k50_80_20.yaml",
+  "feature_path": "C:\\Users\\rudra\\Downloads\\CNS_Research-Project\\runs\\real\\artifacts\\stage05_static_features.parquet",
+  "label_source": "C:\\Users\\rudra\\Downloads\\CNS_Research-Project\\runs\\real\\manifests\\maldroid_split_manifest.parquet",
+  "selection_source": "C:\\Users\\rudra\\Downloads\\CNS_Research-Project\\runs\\real\\artifacts\\stage08_feature_selection.json",
+  "feature_modality": "static",
+  "feature_selection_method": "mutual_info",
+  "feature_selection_k": 50,
+  "selected_feature_base_names": [
+    "ANDROID.permission.VIBRATE",
+    "ContentResolver:insert",
+    "PC",
+    "ASSET",
+    "WB_EXP",
+    "Web",
+    "WA",
+    "num_permissions.1",
+    "PROVIDER",
+    "de.aktiwir.aktibmi.util.Reminder",
+    "HAP_BIND",
+    "main_activity.1",
+    "NONA",
+    "remount",
+    "TTComp",
+    "'android.intent.action.PACKAGE_REMOVED'.1",
+    "DOME_TOGGLE",
+    "'android.intent.action.PACKAGE_REPLACED'.1",
+    "SmsManager:sendTextMessage",
+    "FoxPro",
+    "FilterService.ACTION_FILTER_NO_LICENSE",
+    "WIDGET_UPDATE_ACTION_TO_NEXT_ARTICLE",
+    "'android.intent.action.PACKAGE_ADDED'.1",
+    "ensufwosr.rokcvyfjtdp.sdjhwvlha",
+    "Lcom/asdjklqw/echovox/MainA; => onCreate => iput-object => Lcom/asdjklqw/echovox/MainA;->intenta Landroid/content/Intent;",
+    "MIPSEL-BE",
+    "'settings put global airplane_mode_on 1 \\n am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true \\n'.1",
+    "Context:getApplicationInfo",
+    "'android.intent.action.BOOT_COMPLETED'.1",
+    "GARMIN_PRIVACY_POLICY",
+    "num_third_part_permissions.1",
+    "UTIL",
+    "JAVA_REFLECTION",
+    "Convex",
+    "CoreAudio",
+    "INPUTMETHODSERVICE",
+    "num_services.1",
+    "JPEG",
+    "APP_EULA",
+    "VAX",
+    "'android.intent.action.WEB_SEARCH'.1",
+    "La/a",
+    "DAILY_CALENDAR",
+    "TIMER",
+    "RAR",
+    "JAVA_REFLECTION.1",
+    "Lcom/asdjklqw/echovox/MainA$3; => onClick => iput-object => Lcom/asdjklqw/echovox/MainA;->intenta Landroid/content/Intent;",
+    "android.intent.action.BATTERY_CHANGED_ACTION.1",
+    "UPDATE_BACKGROUND_AUDIO_NOTIFICATION",
+    "HTML"
+  ],
+  "selected_feature_scaled_columns": [
+    "ANDROID.permission.VIBRATE__scaled",
+    "ContentResolver:insert__scaled",
+    "PC__scaled",
+    "ASSET__scaled",
+    "WB_EXP__scaled",
+    "Web__scaled",
+    "WA__scaled",
+    "num_permissions.1__scaled",
+    "PROVIDER__scaled",
+    "de.aktiwir.aktibmi.util.Reminder__scaled",
+    "HAP_BIND__scaled",
+    "main_activity.1__scaled",
+    "NONA__scaled",
+    "remount__scaled",
+    "TTComp__scaled",
+    "'android.intent.action.PACKAGE_REMOVED'.1__scaled",
+    "DOME_TOGGLE__scaled",
+    "'android.intent.action.PACKAGE_REPLACED'.1__scaled",
+    "SmsManager:sendTextMessage__scaled",
+    "FoxPro__scaled",
+    "FilterService.ACTION_FILTER_NO_LICENSE__scaled",
+    "WIDGET_UPDATE_ACTION_TO_NEXT_ARTICLE__scaled",
+    "'android.intent.action.PACKAGE_ADDED'.1__scaled",
+    "ensufwosr.rokcvyfjtdp.sdjhwvlha__scaled",
+    "Lcom/asdjklqw/echovox/MainA; => onCreate => iput-object => Lcom/asdjklqw/echovox/MainA;->intenta Landroid/content/Intent;__scaled",
+    "MIPSEL-BE__scaled",
+    "'settings put global airplane_mode_on 1 \\n am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true \\n'.1__scaled",
+    "Context:getApplicationInfo__scaled",
+    "'android.intent.action.BOOT_COMPLETED'.1__scaled",
+    "GARMIN_PRIVACY_POLICY__scaled",
+    "num_third_part_permissions.1__scaled",
+    "UTIL__scaled",
+    "JAVA_REFLECTION__scaled",
+    "Convex__scaled",
+    "CoreAudio__scaled",
+    "INPUTMETHODSERVICE__scaled",
+    "num_services.1__scaled",
+    "JPEG__scaled",
+    "APP_EULA__scaled",
+    "VAX__scaled",
+    "'android.intent.action.WEB_SEARCH'.1__scaled",
+    "La/a__scaled",
+    "DAILY_CALENDAR__scaled",
+    "TIMER__scaled",
+    "RAR__scaled",
+    "JAVA_REFLECTION.1__scaled",
+    "Lcom/asdjklqw/echovox/MainA$3; => onClick => iput-object => Lcom/asdjklqw/echovox/MainA;->intenta Landroid/content/Intent;__scaled",
+    "android.intent.action.BATTERY_CHANGED_ACTION.1__scaled",
+    "UPDATE_BACKGROUND_AUDIO_NOTIFICATION__scaled",
+    "HTML__scaled"
+  ],
+  "random_seed": 42,
+  "split_strategy": "stratified_80_20",
+  "test_size": 0.2,
+  "train_sample_count": 9278,
+  "test_sample_count": 2320,
+  "total_sample_count": 11598,
+  "train_label_distribution": {
+    "Riskware": 2037,
+    "Banking": 1680,
+    "Adware": 1002,
+    "SMS Malware": 3123,
+    "Benign": 1436
+  },
+  "test_label_distribution": {
+    "Adware": 251,
+    "Benign": 359,
+    "Banking": 420,
+    "SMS Malware": 781,
+    "Riskware": 509
+  },
+  "reg_param_candidates": [
+    0.0,
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "selected_reg_param": 0.0,
+  "cv_results": [
+    {
+      "reg_param": 0.0,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.9126634678676313,
+      "cv_macro_f1_std": 0.005825367833096996,
+      "cv_macro_f1_folds": [
+        0.919197487070045,
+        0.90366250283908,
+        0.9122226568004695,
+        0.909559828673092,
+        0.9186748639554697
+      ],
+      "warnings": [
+        "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity."
+      ]
+    },
+    {
+      "reg_param": 0.1,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.907594137795904,
+      "cv_macro_f1_std": 0.005255804075352146,
+      "cv_macro_f1_folds": [
+        0.9169150490937259,
+        0.9017878310013507,
+        0.9084793266396121,
+        0.9035151261257981,
+        0.9072733561190326
+      ],
+      "warnings": []
+    },
+    {
+      "reg_param": 0.25,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.8797085181310816,
+      "cv_macro_f1_std": 0.00639581743278757,
+      "cv_macro_f1_folds": [
+        0.8830531293529612,
+        0.8683200475204483,
+        0.8865345598854958,
+        0.8774615269005688,
+        0.8831733269959339
+      ],
+      "warnings": []
+    },
+    {
+      "reg_param": 0.5,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.8622284352040248,
+      "cv_macro_f1_std": 0.010751537539972485,
+      "cv_macro_f1_folds": [
+        0.8707024417371475,
+        0.8471821896502106,
+        0.8708505976343005,
+        0.8511204003711761,
+        0.8712865466272891
+      ],
+      "warnings": []
+    },
+    {
+      "reg_param": 0.75,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.845591031435235,
+      "cv_macro_f1_std": 0.011452445947840202,
+      "cv_macro_f1_folds": [
+        0.8517918269480823,
+        0.8340241515134469,
+        0.8545377651066168,
+        0.8297100104609154,
+        0.8578914031471134
+      ],
+      "warnings": []
+    },
+    {
+      "reg_param": 1.0,
+      "status": "PASS",
+      "cv_macro_f1_mean": 0.7096214106242458,
+      "cv_macro_f1_std": 0.007511957681706122,
+      "cv_macro_f1_folds": [
+        0.7216828341316496,
+        0.7069389748081828,
+        0.7097540859982205,
+        0.6983763313602418,
+        0.7113548268229344
+      ],
+      "warnings": []
+    }
+  ],
+  "training_warnings": [
+    "The covariance matrix of class 4 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity."
+  ],
+  "training_runtime_seconds": 1.541218699887395,
+  "train_accuracy": 0.9260616512179349,
+  "train_macro_f1": 0.9210076946198373,
+  "test_metrics": {
+    "accuracy": 0.9107758620689655,
+    "balanced_accuracy": 0.9153585317242454,
+    "macro_precision": 0.8971804192770746,
+    "macro_recall": 0.9153585317242454,
+    "macro_f1": 0.9047328098289562,
+    "weighted_precision": 0.9153204283899357,
+    "weighted_recall": 0.9107758620689655,
+    "weighted_f1": 0.9116181486839444,
+    "per_class_report": {
+      "Adware": {
+        "precision": 0.9010989010989011,
+        "recall": 0.9800796812749004,
+        "f1-score": 0.9389312977099237,
+        "support": 251.0
+      },
+      "Banking": {
+        "precision": 0.8285077951002228,
+        "recall": 0.8857142857142857,
+        "f1-score": 0.856156501726122,
+        "support": 420.0
+      },
+      "Benign": {
+        "precision": 0.8345864661654135,
+        "recall": 0.9275766016713092,
+        "f1-score": 0.8786279683377308,
+        "support": 359.0
+      },
+      "Riskware": {
+        "precision": 0.9230769230769231,
+        "recall": 0.8487229862475442,
+        "f1-score": 0.8843398157625384,
+        "support": 509.0
+      },
+      "SMS Malware": {
+        "precision": 0.9986320109439124,
+        "recall": 0.9346991037131882,
+        "f1-score": 0.9656084656084656,
+        "support": 781.0
+      },
+      "accuracy": 0.9107758620689655,
+      "macro avg": {
+        "precision": 0.8971804192770746,
+        "recall": 0.9153585317242454,
+        "f1-score": 0.9047328098289562,
+        "support": 2320.0
+      },
+      "weighted avg": {
+        "precision": 0.9153204283899357,
+        "recall": 0.9107758620689655,
+        "f1-score": 0.9116181486839444,
+        "support": 2320.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        246,
+        0,
+        2,
+        3,
+        0
+      ],
+      [
+        10,
+        372,
+        21,
+        16,
+        1
+      ],
+      [
+        0,
+        21,
+        333,
+        5,
+        0
+      ],
+      [
+        17,
+        27,
+        33,
+        432,
+        0
+      ],
+      [
+        0,
+        29,
+        10,
+        12,
+        730
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Adware",
+      "Banking",
+      "Benign",
+      "Riskware",
+      "SMS Malware"
+    ],
+    "test_sample_count": 2320
+  },
+  "class_labels": [
+    "Adware",
+    "Banking",
+    "Benign",
+    "Riskware",
+    "SMS Malware"
+  ],
+  "package_versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "pyarrow": "25.0.1",
+    "PyYAML": "6.0.3",
+    "joblib": "1.6.0",
+    "matplotlib": "3.10.9",
+    "seaborn": "0.13.2",
+    "python": "3.10.18"
+  },
+  "input_file_hashes": {
+    "feature_parquet_sha256": "c19ff82bb1fdb5612f414d1916fefb96c6e0d768b473bd3927730e2f5ec5a3c6",
+    "manifest_sha256": "b91ca32f85b5c1682a413b98037883c16af805dd71d0c71aad3019e76e7a0e38",
+    "selection_report_sha256": "a0aacba60170353ebad0f1e6d2ee0afe39b298d329c17f6756dc85fe395194b2"
+  }
+}

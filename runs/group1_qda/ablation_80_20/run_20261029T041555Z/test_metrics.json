@@ -1,0 +1,100 @@
+{
+  "accuracy": 0.9107758620689655,
+  "balanced_accuracy": 0.9153585317242454,
+  "macro_precision": 0.8971804192770746,
+  "macro_recall": 0.9153585317242454,
+  "macro_f1": 0.9047328098289562,
+  "weighted_precision": 0.9153204283899357,
+  "weighted_recall": 0.9107758620689655,
+  "weighted_f1": 0.9116181486839444,
+  "per_class_report": {
+    "Adware": {
+      "precision": 0.9010989010989011,
+      "recall": 0.9800796812749004,
+      "f1-score": 0.9389312977099237,
+      "support": 251.0
+    },
+    "Banking": {
+      "precision": 0.8285077951002228,
+      "recall": 0.8857142857142857,
+      "f1-score": 0.856156501726122,
+      "support": 420.0
+    },
+    "Benign": {
+      "precision": 0.8345864661654135,
+      "recall": 0.9275766016713092,
+      "f1-score": 0.8786279683377308,
+      "support": 359.0
+    },
+    "Riskware": {
+      "precision": 0.9230769230769231,
+      "recall": 0.8487229862475442,
+      "f1-score": 0.8843398157625384,
+      "support": 509.0
+    },
+    "SMS Malware": {
+      "precision": 0.9986320109439124,
+      "recall": 0.9346991037131882,
+      "f1-score": 0.9656084656084656,
+      "support": 781.0
+    },
+    "accuracy": 0.9107758620689655,
+    "macro avg": {
+      "precision": 0.8971804192770746,
+      "recall": 0.9153585317242454,
+      "f1-score": 0.9047328098289562,
+      "support": 2320.0
+    },
+    "weighted avg": {
+      "precision": 0.9153204283899357,
+      "recall": 0.9107758620689655,
+      "f1-score": 0.9116181486839444,
+      "support": 2320.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      246,
+      0,
+      2,
+      3,
+      0
+    ],
+    [
+      10,
+      372,
+      21,
+      16,
+      1
+    ],
+    [
+      0,
+      21,
+      333,
+      5,
+      0
+    ],
+    [
+      17,
+      27,
+      33,
+      432,
+      0
+    ],
+    [
+      0,
+      29,
+      10,
+      12,
+      730
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "Adware",
+    "Banking",
+    "Benign",
+    "Riskware",
+    "SMS Malware"
+  ],
+  "test_sample_count": 2320
+}

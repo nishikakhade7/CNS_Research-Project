@@ -6,6 +6,7 @@ import argparse
 import json
 import platform
 import sys
+import time
 import warnings
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
@@ -18,7 +19,7 @@ import pandas as pd
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 
@@ -252,6 +253,7 @@ def train(config_path: str | Path) -> Path:
 
     candidate_results: list[dict[str, Any]] = []
     best: tuple[float, int, QuadraticDiscriminantAnalysis, dict[str, Any]] | None = None
+    _search_start = time.perf_counter()
     for index, candidate in enumerate(candidates):
         reg_param = float(candidate)
         model = _build_model(config, reg_param)
@@ -282,6 +284,7 @@ def train(config_path: str | Path) -> Path:
                 "error": f"{type(exc).__name__}: {exc}",
                 "warnings": captured_warnings,
             })
+    training_runtime_seconds = time.perf_counter() - _search_start
     if best is None:
         details = [item.get("error", "unknown fitting failure") for item in candidate_results]
         raise DataContractError(
@@ -297,6 +300,14 @@ def train(config_path: str | Path) -> Path:
         "classes": selected_model.classes_.tolist(),
     }
     joblib.dump(model_payload, run_dir / "qda_model.joblib")
+    # Compute train-set metrics on the final selected model (train-only; no leakage).
+    train_predictions = selected_model.predict(X_train)
+    train_metrics = {
+        "accuracy": float(accuracy_score(y_train, train_predictions)),
+        "macro_f1": float(f1_score(y_train, train_predictions, average="macro", zero_division=0)),
+        "weighted_f1": float(f1_score(y_train, train_predictions, average="weighted", zero_division=0)),
+        "balanced_accuracy": float(balanced_accuracy_score(y_train, train_predictions)),
+    }
     training_id_hashes = (
         bundle.report["train_id_hashes"] + bundle.report["validation_id_hashes"]
     )
@@ -318,6 +329,8 @@ def train(config_path: str | Path) -> Path:
         "selected_reg_param": float(selected_model.reg_param),
         "validation_selection_metric": "macro_f1",
         "validation_metrics": best[3],
+        "train_metrics": train_metrics,
+        "training_runtime_seconds": float(training_runtime_seconds),
     }
     with (run_dir / "training_metadata.json").open("w", encoding="utf-8") as stream:
         json.dump(metadata, stream, indent=2, default=str)

@@ -20,6 +20,7 @@ import hashlib
 import json
 import platform
 import sys
+import time
 import warnings
 from collections import Counter
 from datetime import datetime, timezone
@@ -631,6 +632,7 @@ def run_experiment(config_path: str | Path) -> Path:
     # 6. Select best reg_param via cross-validation on training data
     # ------------------------------------------------------------------
     print(f"\n[6/8] Selecting reg_param via {5}-fold stratified CV on training data...")
+    _train_start = time.perf_counter()
     best_reg_param, cv_results = select_best_reg_param(
         X_train, y_train, reg_param_candidates, k, seed
     )
@@ -644,6 +646,7 @@ def run_experiment(config_path: str | Path) -> Path:
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         final_model.fit(X_train, y_train)
+    training_runtime_seconds = time.perf_counter() - _train_start
     training_warnings = [str(w.message) for w in caught]
     if training_warnings:
         print(f"  [WARN] Training warnings: {training_warnings}")
@@ -754,6 +757,7 @@ def run_experiment(config_path: str | Path) -> Path:
         "selected_reg_param": best_reg_param,
         "cv_results": cv_results,
         "training_warnings": training_warnings,
+        "training_runtime_seconds": float(training_runtime_seconds),
         "train_accuracy": train_accuracy,
         "train_macro_f1": train_f1,
         "test_metrics": test_metrics,
@@ -801,6 +805,15 @@ def run_experiment(config_path: str | Path) -> Path:
         })
     pd.DataFrame(per_class_rows).to_csv(run_dir / "per_class_metrics.csv", index=False)
     print(f"  Saved per_class_metrics.csv")
+
+    # Save per-sample test predictions CSV.
+    predictions_df = pd.DataFrame({
+        "sample_id": test_ids.tolist(),
+        "true_label": y_test.tolist(),
+        "predicted_label": y_pred.tolist(),
+    })
+    predictions_df.to_csv(run_dir / "test_predictions.csv", index=False)
+    print(f"  Saved test_predictions.csv")
 
     print(f"\n{'=' * 70}")
     print(f"  [OK] Experiment complete! All outputs saved to:")

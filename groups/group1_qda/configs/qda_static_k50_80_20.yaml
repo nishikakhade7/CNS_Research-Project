@@ -33,4 +33,4 @@ qda:
   reg_param_candidates: [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
 
 random_seed: 42
-output_dir: groups/group1_qda/outputs/qda_80_20_experiment
+output_dir: runs/group1_qda/ablation_80_20

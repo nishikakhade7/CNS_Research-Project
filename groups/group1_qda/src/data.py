@@ -113,6 +113,51 @@ def _read_table(path: Path, *, field: str) -> pd.DataFrame:
     return frame
 
 
+def _read_feature_parquet_projected(
+    path: Path,
+    config: dict[str, Any],
+    project_root: Path,
+    id_column: str,
+) -> pd.DataFrame:
+    """Load a wide feature Parquet with column projection to avoid OOM.
+
+    For the static feature table (62K+ columns, ~5.5 GB), loading all columns
+    exhausts RAM on typical 16 GB research machines. When feature_selection.
+    selection_source is configured, project to only the pre-selected RAW
+    (non-__scaled) columns + id_column, keeping peak memory under 100 MB.
+    Note: _feature_is_metadata strips __scaled columns, so we must load the
+    raw base names. Falls back to a full load if projection cannot be resolved.
+    """
+    suffix = path.suffix.lower()
+    if suffix not in {".parquet", ".pq"}:
+        return _read_table(path, field="feature dataset")
+    if not config.get("feature_selection", {}).get("selection_source"):
+        return _read_table(path, field="feature dataset")
+    try:
+        import pyarrow.parquet as pq
+        pf = pq.ParquetFile(str(path), memory_map=True)
+        schema_names = set(pf.schema_arrow.names)
+        _, selected_scaled_cols = _load_selection_columns(config, path, project_root, schema_names)
+        # _feature_is_metadata excludes __scaled columns, so project the raw base names.
+        raw_cols = [
+            col[:-len("__scaled")] if col.endswith("__scaled") else col
+            for col in selected_scaled_cols
+        ]
+        missing_raw = [c for c in raw_cols if c not in schema_names]
+        if missing_raw:
+            # Raw versions absent; fall back to full load.
+            return _read_table(path, field="feature dataset")
+        project_cols = [id_column] + raw_cols
+        table = pf.read(columns=project_cols, use_threads=False)
+        frame = table.to_pandas()
+        del table
+        return frame
+    except Exception:
+        # Fallback: load everything (slow but correct).
+        return _read_table(path, field="feature dataset")
+
+
+
 def _require_column(frame: pd.DataFrame, column: str, *, field: str, path: Path) -> None:
     if column not in frame.columns:
         raise DataContractError(
@@ -205,7 +250,7 @@ def load_dataset(config: dict[str, Any], project_root: Path) -> DatasetBundle:
     feature_path = resolve_config_path(ds.get("feature_path", ""), project_root, field="feature_path")
     label_path = resolve_config_path(ds.get("label_source", ""), project_root, field="label_source")
     split_path = resolve_config_path(ds.get("split_source", ""), project_root, field="split_source")
-    feature_table = _read_table(feature_path, field="feature dataset")
+    feature_table = _read_feature_parquet_projected(feature_path, config, project_root, id_column)
     label_table = _read_table(label_path, field="label source")
     split_table = _read_table(split_path, field="split source")
 

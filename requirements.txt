@@ -10,5 +10,6 @@ loguru
 pyyaml
 psutil
 matplotlib
+seaborn
 joblib
 pytest

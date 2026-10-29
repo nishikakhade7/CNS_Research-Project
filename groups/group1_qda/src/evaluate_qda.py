@@ -9,6 +9,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 import joblib
 from sklearn.metrics import (
     accuracy_score,
@@ -94,6 +101,8 @@ def evaluate(
             )
     X_test_frame = bundle.features.loc[test_mask]
     y_test = bundle.labels.loc[test_mask].to_numpy()
+    # Preserve test sample IDs for the predictions CSV.
+    test_sample_ids = bundle.features.index[test_mask].tolist()
     X_test = _transform(X_test_frame, payload["preprocessing"])
     predictions = payload["model"].predict(X_test)
     class_labels = payload["classes"]
@@ -145,6 +154,30 @@ def evaluate(
     }
     with (evaluation_dir / "evaluation_results.json").open("w", encoding="utf-8") as stream:
         json.dump(result, stream, indent=2, default=str)
+
+    # Save confusion matrix PNG.
+    cm_array = np.array(metrics["confusion_matrix"])
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(
+        cm_array, annot=True, fmt="d", cmap="Blues",
+        xticklabels=class_labels, yticklabels=class_labels, ax=ax,
+        linewidths=0.5, linecolor="gray",
+    )
+    ax.set_xlabel("Predicted Label", fontsize=12)
+    ax.set_ylabel("True Label", fontsize=12)
+    ax.set_title("QDA Confusion Matrix (Official 3-Way Split — Test Set)", fontsize=13, fontweight="bold")
+    plt.tight_layout()
+    fig.savefig(evaluation_dir / "confusion_matrix.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+    # Save per-sample predictions CSV.
+    predictions_df = pd.DataFrame({
+        "sample_id": test_sample_ids,
+        "true_label": y_test.tolist(),
+        "predicted_label": predictions.tolist(),
+    })
+    predictions_df.to_csv(evaluation_dir / "test_predictions.csv", index=False)
+
     return evaluation_dir
 
 
