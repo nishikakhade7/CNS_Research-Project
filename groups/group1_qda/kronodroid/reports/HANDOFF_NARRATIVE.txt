@@ -1,0 +1,79 @@
+# Group 1 KronoDroid QDA: method, evidence and critical handoff to Group 3
+
+## Purpose and measured outcome
+
+**VERIFIED** - This is a standalone technical handoff for Group 3's AI agent and human reviewers. It explains the completed binary KronoDroid QDA experiment, its provenance, configuration, failures, assumptions and limitations. The evidence appendix supplies every executed configuration value and all TRAIN/VAL/TEST results. The main report is available as a Word document, a self-contained HTML document and plain text; it is not a README deliverable.
+
+**VERIFIED** - Successful source run: runs/group1_qda/kronodroid/20261029T080353_215967Z. The primary prespecified feature set is mi_top50, whose TEST accuracy is 0.8959720088752346 and macro F1 is 0.895972008117629. Separately, the overall feature set selected using VAL only is et_top50 with reg_param=0.1. Its TEST accuracy is 0.911247653183137, Malware F1 is 0.9128832300217792, and macro F1 is 0.9112163584445303. Reporting the validation winner does not erase the lower primary result.
+
+**VERIFIED** - These results are below GROUP 3's LightGBM numbers: replication accuracy 0.9779 / Malware F1 0.979 and full_standardized accuracy 0.9834 / Malware F1 0.9842. No score has been inflated, rounded up or substituted with another group's result. We did not tune QDA after inspecting TEST to close the gap.
+
+**VERIFIED** - The selected et_top50 model missed 757 of 6,206 Malware apps and falsely flagged 283 of 5,512 Benign apps on TEST; it correctly identified 5,449 Malware and 5,229 Benign apps. These errors remain material even though its ROC-AUC is 0.97042641736285. ROC-AUC describes probability ranking over thresholds, not the actual error count at the recorded predict decision rule. No new threshold was chosen after looking at these errors.
+
+## What Group 1 added and what Group 3 supplied
+
+**VERIFIED** - Group 3 supplied the real-device data preparation, labels, split manifest, standardized features and ordered train-only feature rankings. Group 1 added the separate groups/group1_qda/kronodroid module, YAML-driven QDA search, frozen-model evaluation, outputs, tests and this reporting layer. Existing MalDroid code and all Group 3 artifacts remain separate. MalDroid is the older five-class experiment, not the dataset used for the new results.
+
+**VERIFIED** - The repository contribution was committed and pushed as 9772db9acc81f878bd542b57022c919868340988 to nishikakhade7/CNS_Research-Project on branch grp1-qda-kronodroid, with commit author rudii246 <rudrakoli9207@gmail.com>. It contains the reviewed code, configurations, reports, prediction CSVs and successful/failed-run metadata. The four model.joblib files were intentionally not committed because model-file approval was not given. They exist locally. A clean clone can inspect metrics and predictions but cannot load these four frozen models from that commit. This is an explicit handoff limitation, not a claim that the models were shared.
+
+**VERIFIED** - This report and its plots are a later documentation addition and are not part of the earlier commit unless separately committed. The reporting process does not write to the successful run or to runs/kronodroid or runs/real. The reporting audit records source hashes and checks them again after rendering.
+
+## What the pipeline actually did, in order
+
+**VERIFIED** - First, it loaded kd05_features_scaled.parquet, kd04_split_manifest.parquet and kd06_feature_rankings.json. It checked dimensions, finite numeric features, SHA256-index validity and uniqueness, exact split/label counts, cross-artifact label alignment, source_dataset and ordered feature-list membership. The SHA256 index is unnamed; no assumption that its name is literally sha256 is made. Group 3's metric JSON is read only for provenance/comparison, not model selection.
+
+**VERIFIED** - Second, it selected the original ordered lists mi_top50, mi_top30, mi_top100 and et_top50. It measured variance using TRAIN only and removed features only when that variance was exactly 0.0 (ddof=0). None of the four selected lists lost a feature. It did not infer that this guarantees full class covariance rank. No new split, scaler, imputer, ranking, SMOTE procedure or class weighting was fitted by Group 1.
+
+**VERIFIED** - Third, each feature set ran the same eight reg_param candidates: [0.0, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.0]. Each QDA fit saw TRAIN only. Each candidate was scored on VAL macro F1. An exact tied macro F1 would choose the larger reg_param. The original task specified this grid and candidate tie rule; they were not inferred from TEST.
+
+**VERIFIED** - Fourth, the already-fitted winning candidate for each feature set was retained with no train+val refit. The overall winner was selected by VAL macro F1 before TEST. Exact cross-feature-set ties would follow the previously declared order mi_top50, mi_top30, mi_top100, et_top50. All four models and the selection summary were saved before the first TEST evaluation.
+
+**VERIFIED** - Fifth, the final TRAIN/VAL/TEST metric sets were computed for each frozen winner. One predict call and one predict_proba call make up each winner's TEST evaluation; all TEST metrics, CSV rows and confusion plots reuse those arrays. No TEST result enters the ranking, constant filter, grid search, prior estimate or winner selection. ROC-AUC uses the class-1 probability, not a predicted label. The stored predictions use sklearn's predict decision rule; there is no custom tuned threshold.
+
+## Every assumption and convention, with its evidential limit
+
+**VERIFIED (declared assumption)** - The authority for sample identity, source and target labels is Group 3's processed data contract. We checked consistency and hashes. **NOT VERIFIED** - We did not independently relabel apps, adjudicate upstream malware truth, reconstruct the raw CSV pipeline or verify the original dataset paper's every claim.
+
+**VERIFIED (declared assumption)** - We accepted Group 3's existing split and TRAIN-only processing/ranking recipe. Source inspection supports the train-only claim. **NOT VERIFIED** - No independent raw-to-Parquet rebuild proves the historical execution of every upstream transformation; hashes establish artifact identity, not scientific ground truth.
+
+**VERIFIED (declared choice)** - K=50 MI was designated primary by the user; the additional K values/ranking method and regularisation grid were likewise specified. Selection of the feature set itself uses VAL. Exact cross-set ties follow configured order, an implementation assumption declared before testing, rather than an unmentioned preference for whichever looks better on TEST.
+
+**VERIFIED (declared convention)** - Variance is population variance (ddof=0); only exactly zero TRAIN variance is removed. This is not a near-zero tolerance filter, per-class filter or covariance-rank pruning step. Remaining feature order is unchanged. This preserves the specified lists except documented constants.
+
+**VERIFIED (declared convention)** - priors=None and tol=0.0001 remain sklearn defaults. Empirical fitted priors are [0.47038818087071, 0.52961181912929], derived from TRAIN. We did not choose equal priors to force class balance. store_covariance=False is also the default. Seed=42 is recorded; QDA itself has no random_state parameter, and the new runner does not redo stochastic feature selection.
+
+**VERIFIED (declared convention)** - Benign is 0 and Malware is 1; class 1 is positive. Confusion matrices use rows=true and columns=predicted, order [0,1]. Undefined precision/recall/F1 uses zero_division=0. Macro F1 is the unweighted mean over both classes, whereas Malware F1 is binary class-1 F1. TRAIN metrics are in-sample and cannot be advertised as held-out performance.
+
+**VERIFIED (environment choice)** - The original sklearn 1.9.1 attempt failed on mi_top50/reg_param=0.0 before any TEST evaluation. Rather than skipping the failed candidate or removing it from the grid, the run stopped. Following user approval, a separate environment used sklearn 1.7.2, matching Group 3's documented sklearn version. The same YAML and runner were then used. This was an environment change in response to a compatibility/numerical failure, not proof that the older library is more accurate or scientifically superior.
+
+**VERIFIED** - The final environment has Python 3.14.3, numpy 2.5.4, pandas 3.1.0, sklearn 1.7.2 and the complete package list in the appendix. Matching sklearn alone does not recreate Group 3's environment. The runner saves package versions but does not enforce the exact version set or compare a newly loaded input hash against an externally trusted lockfile; counts and schema alone do not fully freeze a dataset's values. Reproduction must use the recorded versions and hashes explicitly.
+
+**VERIFIED (reporting choice)** - UTC timestamps and separate feature-set directories identify outputs. They are not experimental repetitions or performance estimates. Winning-candidate fit duration and all-candidate search duration are different measurements and are reported separately. Times were measured once on this machine; no claim about general hardware speed or statistical timing precision is made.
+
+**NOT VERIFIED (modelling assumption)** - QDA's class-conditional Gaussian density assumption has not been established for these mixed permission/count/structural features. Standardisation does not demonstrate multivariate normality. The exact within-class feature dependencies behind the unregularised covariance warnings were not isolated. Binary detection performance does not establish family classification performance.
+
+**NOT VERIFIED (external validity)** - No independent external dataset, deployment test, time-forward holdout, confidence interval, repeated-split study or probability calibration study was performed. We do not claim performance on future apps, emulator data, family labels or MalDroid from this experiment. The fixed split is not evidence of temporal generalisation.
+
+## Critical review: what is sound and what remains incomplete
+
+**VERIFIED** - The 32 successful search records, twelve split-metric files, all eight rank-deficiency warning occurrences, configured values, provenance hashes and runtime fields are available for review. The 26 contract tests passed in the historical Step 6 run. Saved model class means and empirical priors were checked against TRAIN without refitting. Independently recomputed metrics from the four CSVs match their TEST JSONs exactly. These checks support the recorded numerical results and the implemented data contract; they do not prove all untested modelling assumptions.
+
+**VERIFIED (limitation)** - The initial 1.9.1 failure and successful 1.7.2 warning behavior must remain visible. A non-failing old-library fit is not a mathematical cure for singular covariance. All selected models use positive regularisation and emitted no captured warnings, which is the actual observation; numerical stability under arbitrary perturbations was not demonstrated.
+
+**VERIFIED (limitation)** - The tests protect the requested data contracts and path rejection behavior, but do not provide a complete end-to-end proof of warning capture, exactly-once evaluation across process restarts or failure recovery. The new-run guard prevents overwriting an existing directory; it does not prevent an operator from creating another timestamped run. No claims of a globally locked TEST dataset or immutable model object are made. 'Frozen' means retained without further fitting in this run.
+
+**VERIFIED (limitation)** - The output guard checks resolved output directories and fixed protected roots. It does not grant operating-system immutability to Group 3 files or prevent unrelated processes from editing them. Missing/infinite features are rejected rather than silently repaired by Group 1. A candidate exception causes the run to stop and persist failure information; the implementation was not changed to silently continue after the failed first run.
+
+**VERIFIED (comparison limitation)** - Group 3's stored F1 is Malware F1 rounded by their stage09_eval.py, not macro F1. Their replication model uses the same et_top50 feature identities but extra MinMax scaling, balanced class weights and LightGBM/early-stopping behavior. Their full model uses 475 features. Therefore, the observed gap is not a controlled experiment isolating only the choice of classifier. We do not invent statistical significance or claim a fair causal explanation for the gap.
+
+**VERIFIED (handoff limitation)** - Without separately approved model files, another agent can audit results and regenerate report plots from committed artifacts but cannot load the original frozen estimator from Git. The models remain local. Retraining is not the preferred method for reviewing already reported TEST results; it can create another TEST evaluation. To extend the study after viewing this TEST, use a separately declared experiment and new evaluation protocol rather than presenting further tuning as an untouched-test result.
+
+## How Group 3's agent should review this work
+
+**VERIFIED** - Start with the exact experiment YAML and runner under groups/group1_qda/kronodroid, then the successful run's input_provenance.json and selection_summary.json. Check hashes against the four input paths. Read the per-set reg_param_search.json before the TEST results to verify the selection rule. Distinguish the primary mi_top50 experiment from the overall VAL-selected et_top50 result. The appendix gives every configured value, chooser and purpose, exact warning text and all split metrics side by side.
+
+**VERIFIED** - The reporting script build_handoff_report.py reads JSON and saved CSVs; it never imports the training runner or loads joblib models. It verifies saved predictions, selection maxima and source hashes, then writes twelve PNG/PDF figures, a combined plot PDF, a Word report, self-contained HTML, plain text and report_audit.json. The new ROC/precision-recall plots are retrospective visualisation only. They do not select another model or threshold, and no additional performance number is advertised from them.
+
+**VERIFIED (presentation choices)** - The principal numeric rendering settings are in configs/handoff_report.json: score limits [0.0,1.0], PNG DPI 180, wide figure size [11,6.5] inches, double-panel size [14,6.5], confusion PDF size [7,6], overview size [18,20] with 3 columns, bar width 0.24, winner marker size 180, runtime axis headroom multiplier 1.8, legend/annotation font size 8, and base font size 10. Colours are recorded as exact hex values in that file. Fixed presentation conventions in the reporting source include circular search markers, star winner markers, gray dashed reference lines, a Blues count heatmap, integer warning counts and gray/white confusion annotation contrast. These are report-author presentation choices, not model hyperparameters. Full 0-to-1 score axes avoid exaggerating differences; exact numeric tables remain authoritative. Original confusion PNGs retain the original executed plotting settings, and are copied byte-for-byte; PDF versions are redrawn from stored counts. report_audit.json records input/output hashes and the full reporting configuration. DOCX archive/XML validity is checked; appearance in Microsoft Word is NOT VERIFIED by a GUI session.
+
+**VERIFIED** - No experiment settings, predictions or original result files are changed to create this handoff. The README remains a repository reference; this Word/HTML/text description is the requested standalone deliverable. Any later publication of these new files requires a separate commit/push step.

@@ -1,5 +1,7 @@
 # Group 1: KronoDroid binary QDA
 
+**VERIFIED** - A standalone handoff is now available as [Word](reports/Group3_Handoff_Report.docx), [self-contained HTML](reports/Group3_Handoff_Report.html), and [plain text](reports/Group3_Handoff_Report.txt). It includes a fresh critical review, every configured value, exact result tables, ordered feature lists and the [complete plot atlas](plots/All_KronoDroid_QDA_Plots.pdf). Individual PNG/PDF figures are in `plots/`; rendering provenance and checks are in `reports/report_audit.json`. These reporting additions do not refit or reevaluate models.
+
 **VERIFIED** - Final run: `runs/group1_qda/kronodroid/20261029T080353_215967Z`. Validation selected **et_top50, reg_param=0.1**. Its TEST accuracy is **0.911247653183137**, Malware F1 **0.9128832300217792**, and macro F1 **0.9112163584445303**. These are QDA results; they are below Group 3's recorded LightGBM accuracy and Malware F1. The prespecified primary experiment remains `mi_top50`; the overall validation winner is reported separately.
 
 Claim labels apply to the paragraph, list, code block or table immediately following them. VERIFIED means checked against the named local files, implementation or execution output; it does not mean independently validated against raw apps. NOT VERIFIED identifies untested assumptions or claims. Numbers below use the values stored in JSON without display rounding or invented digits.
