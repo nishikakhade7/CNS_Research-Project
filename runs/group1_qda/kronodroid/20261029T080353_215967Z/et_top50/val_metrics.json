@@ -1,0 +1,24 @@
+{
+  "accuracy": 0.9083617747440274,
+  "balanced_accuracy": 0.9107366974280602,
+  "malware_precision": 0.9522466960352423,
+  "malware_recall": 0.8706299339455453,
+  "malware_f1": 0.9096111765696011,
+  "macro_f1": 0.9083442627959617,
+  "roc_auc": 0.9710228538132301,
+  "confusion_matrix": [
+    [
+      5242,
+      271
+    ],
+    [
+      803,
+      5404
+    ]
+  ],
+  "confusion_matrix_labels": [
+    0,
+    1
+  ],
+  "n_samples": 11720
+}

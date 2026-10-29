@@ -1,0 +1,83 @@
+random_seed: 42
+inputs:
+  features: runs/kronodroid/artifacts/kd05_features_scaled.parquet
+  manifest: runs/kronodroid/manifests/kd04_split_manifest.parquet
+  rankings: runs/kronodroid/artifacts/kd06_feature_rankings.json
+  group3_metrics: runs/kronodroid/metrics/kd09_eval_metrics.json
+contract:
+  rows: 78129
+  feature_count: 475
+  index_name: null
+  id_pattern: '^[0-9a-fA-F]{64}$'
+  split_column: split
+  label_column: label_binary
+  manifest_id: sample_id
+  manifest_label: label_binary_raw
+  source_column: source_dataset
+  source_value: kronodroid_real_device
+  canonical_label_column: label_binary_canonical
+  labels: {0: Benign, 1: Malware}
+  forbidden_features: [split, label_binary, sha256, sample_id, label_binary_raw, label_binary_canonical, family_label, MalFamily_raw, Package, source_dataset, Class, label_canonical, dup_group]
+  forbidden_suffix: __scaled
+  split_names: {train: train, val: val, test: test}
+  split_counts: {train: 54691, val: 11720, test: 11718}
+  label_counts:
+    train: {0: 25726, 1: 28965}
+    val: {0: 5513, 1: 6207}
+    test: {0: 5512, 1: 6206}
+  ranking_methods: [mutual_info, extra_trees_importance]
+  top_k_sets:
+    mi_top30: {method: mutual_info, k: 30}
+    mi_top50: {method: mutual_info, k: 50}
+    mi_top100: {method: mutual_info, k: 100}
+    et_top30: {method: extra_trees_importance, k: 30}
+    et_top50: {method: extra_trees_importance, k: 50}
+    et_top100: {method: extra_trees_importance, k: 100}
+selection:
+  feature_sets: [mi_top50, mi_top30, mi_top100, et_top50]
+  primary: mi_top50
+  metric: macro_f1
+  candidate_tie: larger_reg_param
+  feature_set_tie: configured_order
+  zero_variance: 0.0
+  variance_ddof: 0
+qda:
+  reg_param_grid: [0.0, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+  # These are assertions, not constructor overrides: leave sklearn defaults intact.
+  expected_defaults: {priors: null, tol: 0.0001}
+metrics:
+  positive_label: 1
+  confusion_labels: [0, 1]
+  zero_division: 0
+  probability_atol: 1.0e-12
+  probability_rtol: 1.0e-12
+output:
+  directory: runs/group1_qda/kronodroid
+  timestamp_format: '%Y%m%dT%H%M%S_%fZ'
+  json_indent: 2
+  filenames:
+    model: model.joblib
+    config: config_used.yaml
+    versions: package_versions.json
+    seed: random_seed
+    search: reg_param_search.json
+    train: train_metrics.json
+    val: val_metrics.json
+    test: test_metrics.json
+    predictions: test_predictions.csv
+    confusion: confusion_matrix.png
+    runtime: runtime.json
+    warnings: evaluation_warnings.json
+    provenance: input_provenance.json
+    selection: selection_summary.json
+    status: run_status.json
+  prediction_columns: {id: sha256, truth: true_label, prediction: predicted_label, probability: prob_malware}
+plot:
+  backend: Agg
+  figsize: [6, 5]
+  dpi: 150
+  cmap: Blues
+  format: d
+  title: 'KronoDroid QDA test confusion matrix'
+  xlabel: Predicted label
+  ylabel: True label

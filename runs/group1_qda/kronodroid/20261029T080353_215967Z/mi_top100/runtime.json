@@ -1,0 +1,6 @@
+{
+  "final_model_fit_seconds": 0.5019833999995171,
+  "total_feature_set_search_seconds": 4.3204476999999315,
+  "final_model_fit_definition": "Winning candidate fit call only; TRAIN only, no refit.",
+  "search_definition": "All candidate fits, VAL prediction/scoring, warning capture and search logging."
+}

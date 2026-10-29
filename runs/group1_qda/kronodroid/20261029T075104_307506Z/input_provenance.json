@@ -1,0 +1,66 @@
+{
+  "input_files": {
+    "features": {
+      "path": "runs/kronodroid/artifacts/kd05_features_scaled.parquet",
+      "sha256": "dc55adc63f0ae38d6cc5728c69eaf2699c1ab17fa8e1367bcbbcff4a80f0386c"
+    },
+    "manifest": {
+      "path": "runs/kronodroid/manifests/kd04_split_manifest.parquet",
+      "sha256": "9f4047a3fad0188760b105e60bc31f4d46c4cc16489bc7c106ff903c262ba219"
+    },
+    "rankings": {
+      "path": "runs/kronodroid/artifacts/kd06_feature_rankings.json",
+      "sha256": "d70a46502b422dd36ac44fc29017fe3a8499d92b3ae4abfa7de6818275b547e5"
+    },
+    "group3_metrics": {
+      "path": "runs/kronodroid/metrics/kd09_eval_metrics.json",
+      "sha256": "bcdb7a3053978f10d8dc3b1583483187c37160b3d61da82fdd24dc489335743c"
+    }
+  },
+  "rows": 78129,
+  "feature_count": 475,
+  "index_name": null,
+  "split_counts": {
+    "train": 54691,
+    "val": 11720,
+    "test": 11718
+  },
+  "label_counts": {
+    "train": {
+      "0": 25726,
+      "1": 28965
+    },
+    "val": {
+      "0": 5513,
+      "1": 6207
+    },
+    "test": {
+      "0": 5512,
+      "1": 6206
+    }
+  },
+  "group3_metrics": {
+    "cited_benchmark_binary": {
+      "source": "Waheed & Qadir (2024), Security and Communication Networks",
+      "model": "Random Forest (GridSearchCV-tuned)",
+      "accuracy": 0.9803,
+      "precision": 0.9851,
+      "recall": 0.9773,
+      "f1": 0.9812
+    },
+    "replication": {
+      "accuracy": 0.9779,
+      "precision": 0.9836,
+      "recall": 0.9745,
+      "f1": 0.979,
+      "n_test_samples": 11718
+    },
+    "full_standardized": {
+      "accuracy": 0.9834,
+      "precision": 0.9875,
+      "recall": 0.981,
+      "f1": 0.9842,
+      "n_test_samples": 11718
+    }
+  }
+}

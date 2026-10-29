@@ -1,0 +1,8 @@
+[
+  {
+    "reg_param": 0.0,
+    "status": "FAIL",
+    "error": "LinAlgError: The covariance matrix of class 0 is not full rank. Increase the value of `reg_param` to reduce the collinearity.",
+    "warnings": []
+  }
+]

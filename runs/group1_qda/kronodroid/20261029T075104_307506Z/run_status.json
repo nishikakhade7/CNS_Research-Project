@@ -1,0 +1,6 @@
+{
+  "state": "failed_do_not_resume_or_retune",
+  "test_evaluations_started": [],
+  "test_evaluations_completed": [],
+  "error": "LinAlgError: The covariance matrix of class 0 is not full rank. Increase the value of `reg_param` to reduce the collinearity."
+}

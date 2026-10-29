@@ -1,0 +1,15 @@
+{
+  "state": "complete",
+  "test_evaluations_started": [
+    "mi_top50",
+    "mi_top30",
+    "mi_top100",
+    "et_top50"
+  ],
+  "test_evaluations_completed": [
+    "mi_top50",
+    "mi_top30",
+    "mi_top100",
+    "et_top50"
+  ]
+}

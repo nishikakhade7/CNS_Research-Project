@@ -1,0 +1,79 @@
+[
+  {
+    "reg_param": 0.0,
+    "val_macro_f1": 0.8970094342833627,
+    "val_accuracy": 0.8970136518771331,
+    "fit_seconds": 0.5570678999993106,
+    "status": "PASS",
+    "warnings": [
+      {
+        "category": "LinAlgWarning",
+        "message": "The covariance matrix of class 0 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "filename": "C:\\Users\\LOQ\\Downloads\\CNS_Research-Project-grp-number1\\CNS_Research-Project\\.venv-sklearn172\\Lib\\site-packages\\sklearn\\discriminant_analysis.py",
+        "lineno": 1024
+      },
+      {
+        "category": "LinAlgWarning",
+        "message": "The covariance matrix of class 1 is not full rank. Increasing the value of parameter `reg_param` might help reducing the collinearity.",
+        "filename": "C:\\Users\\LOQ\\Downloads\\CNS_Research-Project-grp-number1\\CNS_Research-Project\\.venv-sklearn172\\Lib\\site-packages\\sklearn\\discriminant_analysis.py",
+        "lineno": 1024
+      }
+    ]
+  },
+  {
+    "reg_param": 0.01,
+    "val_macro_f1": 0.9004263014711802,
+    "val_accuracy": 0.9004266211604095,
+    "fit_seconds": 0.5019833999995171,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 0.05,
+    "val_macro_f1": 0.8988887172419504,
+    "val_accuracy": 0.8988907849829352,
+    "fit_seconds": 0.5805724000001646,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 0.1,
+    "val_macro_f1": 0.8981997059403233,
+    "val_accuracy": 0.8982081911262798,
+    "fit_seconds": 0.49325129999851924,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 0.25,
+    "val_macro_f1": 0.8952692506942989,
+    "val_accuracy": 0.8953071672354949,
+    "fit_seconds": 0.47900490000029095,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 0.5,
+    "val_macro_f1": 0.8963729271788656,
+    "val_accuracy": 0.8964163822525597,
+    "fit_seconds": 0.4648147000007157,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 0.75,
+    "val_macro_f1": 0.896407585543205,
+    "val_accuracy": 0.8964163822525597,
+    "fit_seconds": 0.5042591000001266,
+    "status": "PASS",
+    "warnings": []
+  },
+  {
+    "reg_param": 1.0,
+    "val_macro_f1": 0.7833489690859436,
+    "val_accuracy": 0.7842150170648464,
+    "fit_seconds": 0.4803191999999399,
+    "status": "PASS",
+    "warnings": []
+  }
+]
